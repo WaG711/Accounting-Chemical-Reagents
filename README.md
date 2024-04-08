@@ -1,3 +1,1 @@
-# accounting_chemical_reagents
-
-A new Flutter project.
+# Система учета химических реагентов
