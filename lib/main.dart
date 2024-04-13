@@ -1,17 +1,17 @@
+import 'package:accounting_chemical_reagents/src/presentation/pages/login.dart';
+import 'package:accounting_chemical_reagents/src/presentation/pages/order.dart';
+import 'package:accounting_chemical_reagents/src/presentation/pages/registration.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
+  
   runApp(MaterialApp(
-    initialRoute: '/',
+    initialRoute: '/login',
     routes: {
-      '/': (context) {
-        return const ;
-      },
-      '/main': (context) {
-        return const ;
-      }
+      '/login': (context) => Login(),
+      '/registration': (context) => Registration(),
+      '/order': (context) => Order(),
+      //'/warehouse':(context) => Warehouse(),
     },
   ));
 }
