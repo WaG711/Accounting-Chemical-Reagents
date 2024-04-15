@@ -7,14 +7,16 @@ class Registration extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Регистрация'),
+        title: const Text('Регистрация'),
       ),
-      body: RegistrationForm(),
+      body: const RegistrationForm(),
     );
   }
 }
 
 class RegistrationForm extends StatefulWidget {
+  const RegistrationForm({super.key});
+
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
 }
@@ -30,33 +32,33 @@ class _RegistrationFormState extends State<RegistrationForm> {
     return Scaffold(
       body: SingleChildScrollView(
           child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Почта',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Пароль',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _confirmPasswordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Подтвердите пароль',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -69,7 +71,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     });
                   },
                 ),
-                Text('Заказ'),
+                const Text('Заказ'),
                 Radio(
                   value: 'Warehouse',
                   groupValue: _selectedRole,
@@ -79,10 +81,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     });
                   },
                 ),
-                Text('Склад'),
+                const Text('Склад'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 String email = _emailController.text;
@@ -95,14 +97,14 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 print('Role: $role');
                 Navigator.pushReplacementNamed(context, '/order');
               },
-              child: Text('Зарегистрироваться'),
+              child: const Text('Зарегистрироваться'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/login');
               },
-              child: Text('Вход'),
+              child: const Text('Вход'),
             ),
           ],
         ),

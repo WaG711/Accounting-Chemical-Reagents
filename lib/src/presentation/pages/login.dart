@@ -7,14 +7,16 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Вход'),
+        title: const Text('Вход'),
       ),
-      body: LoginForm(),
+      body: const LoginForm(),
     );
   }
 }
 
 class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
   @override
   _LoginFormState createState() => _LoginFormState();
 }
@@ -28,25 +30,25 @@ class _LoginFormState extends State<LoginForm> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Почта',
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Пароль',
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   String email = _emailController.text;
@@ -55,14 +57,14 @@ class _LoginFormState extends State<LoginForm> {
                   print('Password: $password');
                   Navigator.pushReplacementNamed(context, '/order');
                 },
-                child: Text('Войти'),
+                child: const Text('Войти'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/registration');
                 },
-                child: Text('Регистрация'),
+                child: const Text('Регистрация'),
               ),
             ],
           ),

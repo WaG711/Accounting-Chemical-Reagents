@@ -5,7 +5,7 @@ Widget buildDrawer(BuildContext context) {
     child: ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
-        DrawerHeader(
+        const DrawerHeader(
           decoration: BoxDecoration(
             color: Colors.blue,
           ),
@@ -18,23 +18,23 @@ Widget buildDrawer(BuildContext context) {
           ),
         ),
         ListTile(
-          leading: Icon(Icons.settings),
-          title: Text('Settings'),
+          leading: const Icon(Icons.settings),
+          title: const Text('Settings'),
           onTap: () {
             Navigator.pushNamed(context, '/warehouse');
             //Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
           },
         ),
         ListTile(
-          leading: Icon(Icons.home),
-          title: Text('Главный экран'),
+          leading: const Icon(Icons.home),
+          title: const Text('Главный экран'),
           onTap: () {
             Navigator.pushNamed(context, '/order');
           },
         ),
         ListTile(
-          leading: Icon(Icons.login),
-          title: Text('Выйти'),
+          leading: const Icon(Icons.login),
+          title: const Text('Выйти'),
           onTap: () {
             Navigator.pushReplacementNamed(context, '/login');
           },
