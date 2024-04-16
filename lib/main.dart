@@ -1,18 +1,20 @@
-import 'package:accounting_chemical_reagents/src/presentation/pages/login.dart';
-import 'package:accounting_chemical_reagents/src/presentation/pages/order.dart';
-import 'package:accounting_chemical_reagents/src/presentation/pages/registration.dart';
+import 'package:accounting_chemical_reagents/src/domain/database_helper.dart';
+import 'package:accounting_chemical_reagents/src/presentation/pages/entrance.dart';
+import 'package:accounting_chemical_reagents/src/presentation/pages/recipe.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/warehouse.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper().initDatabase();
+
   runApp(MaterialApp(
-    initialRoute: '/login',
+    title: 'Система учета химических реагентов',
+    initialRoute: '/',
     routes: {
-      '/login': (context) => const Login(),
-      '/registration': (context) => const Registration(),
-      '/order': (context) => const Order(),
-      '/warehouse':(context) => Warehouse(),
+      '/': (context) => const Entrance(),
+      '/recipe': (context) => const Recipe(),
+      '/warehouse': (context) => const Warehouse(),
     },
   ));
 }
