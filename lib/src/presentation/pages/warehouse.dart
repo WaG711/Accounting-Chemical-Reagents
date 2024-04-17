@@ -84,6 +84,29 @@ class _WarehouseState extends State<Warehouse> {
                         onPressed: () {
                           if (selectedReagent != null && quantity != null) {
                             Navigator.of(context).pop();
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("Ошибка"),
+                                  content: const Text("Все поля должны быть заполнены"),
+                                  actions: [
+                                    Center(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("OK",
+                                        style: TextStyle(
+                                          color: Colors.black
+                                        ),),
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(

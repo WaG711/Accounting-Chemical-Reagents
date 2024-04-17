@@ -70,9 +70,34 @@ class MyWidgets {
                       Center(
                         child: ElevatedButton(
                             onPressed: () {
-                              Reagent reagent = Reagent(name: name, formula: formula);
-                              ReagentRepository().insertReagent(reagent);
-                              Navigator.of(context).pop();
+                              if (name.isNotEmpty && formula.isNotEmpty) {
+                                Reagent reagent = Reagent(name: name, formula: formula);
+                                ReagentRepository().insertReagent(reagent);
+                                Navigator.of(context).pop();
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text("Ошибка"),
+                                      content: const Text("Все поля должны быть заполнены"),
+                                      actions: [
+                                        Center(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("OK",
+                                            style: TextStyle(
+                                              color: Colors.black
+                                            ),),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blueGrey),
