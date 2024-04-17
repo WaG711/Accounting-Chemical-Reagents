@@ -18,7 +18,7 @@ class Entrance extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.green[300]),
+                  backgroundColor: Colors.blue[300]),
               child: const Text(
                 'Собрать рецепт',
                 style: TextStyle(
@@ -31,22 +31,19 @@ class Entrance extends StatelessWidget {
           const SizedBox(height: 16),
           FractionallySizedBox(
             widthFactor: 0.8,
-            child: ElevatedButton(
+            child: TextButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/warehouse');
               },
-              style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.blueGrey[300]),
               child: const Text(
                 'Управление складом',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
+                  color: Colors.black,
+                  fontSize: 20,
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     ));
