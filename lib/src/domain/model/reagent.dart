@@ -14,4 +14,12 @@ class Reagent {
       'formula': formula
       };
   }
+
+  static Reagent fromMap(Map<String, dynamic> map) {
+    return Reagent(
+      id: map['id'],
+      name: map['name'],
+      formula: map['formula'],
+    );
+  }
 }

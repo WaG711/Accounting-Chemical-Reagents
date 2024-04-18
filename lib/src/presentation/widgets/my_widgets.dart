@@ -100,7 +100,7 @@ class MyWidgets {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[400]),
+                                backgroundColor: Colors.red[300]),
                             child: const Text(
                               'Создать реагент',
                               style:

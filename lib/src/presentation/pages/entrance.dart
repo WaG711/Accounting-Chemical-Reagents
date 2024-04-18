@@ -15,13 +15,13 @@ class Entrance extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/recipe');
             },
             style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                 backgroundColor: Colors.blue[300]),
             child: const Text(
               'Собрать рецепт',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 36,
               ),
             ),
           ),
@@ -34,7 +34,7 @@ class Entrance extends StatelessWidget {
               'Управление складом',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 20,
+                fontSize: 26,
               ),
             ),
           ),
