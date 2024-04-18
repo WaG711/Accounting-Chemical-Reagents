@@ -21,7 +21,7 @@ class Entrance extends StatelessWidget {
               'Собрать рецепт',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 36,
+                fontSize: 32,
               ),
             ),
           ),
@@ -34,7 +34,7 @@ class Entrance extends StatelessWidget {
               'Управление складом',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 26,
+                fontSize: 22,
               ),
             ),
           ),

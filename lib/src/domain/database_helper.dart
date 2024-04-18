@@ -9,7 +9,7 @@ class DatabaseHelper {
         await db.execute(
             'CREATE TABLE reagents (id INTEGER PRIMARY KEY, name TEXT NOT NULL, formula TEXT NOT NULL)');
         await db.execute(
-            'CREATE TABLE warehouse (reagent_id INTEGER PRIMARY KEY,quantity INTEGER NOT NULL,FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE)');
+            'CREATE TABLE warehouse (id INTEGER PRIMARY KEY, reagent_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE)');
         await db.execute(
             'CREATE TABLE recipes (id INTEGER PRIMARY KEY, status INTEGER NOT NULL)');
         await db.execute(

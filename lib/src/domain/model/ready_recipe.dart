@@ -1,10 +1,10 @@
 import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 
-class ReadyRecipe {
+class ReadyRecipeModel {
   final int? id;
   final List<Reagent> reagents;
 
-  const ReadyRecipe({
+  const ReadyRecipeModel({
       this.id,
       required this.reagents});
 
