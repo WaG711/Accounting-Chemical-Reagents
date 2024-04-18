@@ -3,8 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   Future<Database> initDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), 'chemical_reagents_database.db'),
+    return openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'),
       onCreate: (db, version) async {
         await db.execute(
             'CREATE TABLE reagents (id INTEGER PRIMARY KEY, name TEXT NOT NULL, formula TEXT NOT NULL)');

@@ -240,32 +240,37 @@ class _WarehouseState extends State<Warehouse> {
                           itemCount: elements.length,
                           itemBuilder: (context, index) {
                             WarehouseModel element = elements[index];
-                            return ListTile(
+                            return Dismissible(
                               key: UniqueKey(),
-                              title: FutureBuilder<Reagent>(
-                                future: ReagentRepository().getReagentById(element.reagentId),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    return Text('Ошибка: ${snapshot.error}');
-                                  } else {
-                                    return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
-                                  }
-                                },
-                              ),
-                              subtitle: Text('Количество: ${element.quantity}'),
-                              trailing: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueGrey),
-                                onPressed: () {
-                                  WarehouseRepository().deleteElement(element.id!);
-                                  refreshData();
-                                },
-                                child: const Text('Удалить',
-                                  style: TextStyle(color: Colors.white),
+                              child: Card(
+                                child: ListTile(
+                                  title: FutureBuilder<Reagent>(
+                                    future: ReagentRepository()
+                                        .getReagentById(element.reagentId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return Text('Ошибка: ${snapshot.error}');
+                                      } else {
+                                        return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
+                                      }
+                                    },
+                                  ),
+                                  subtitle:Text('Количество: ${element.quantity}'),
+                                  trailing: IconButton(
+                                    onPressed: () {
+                                      refreshData();
+                                    },
+                                    icon: const Icon(Icons.update),
+                                  ),
                                 ),
                               ),
+                              onDismissed: (direction) {
+                                WarehouseRepository().deleteElement(element.id!);
+                                refreshData();
+                              },
                             );
                           },
                         );
