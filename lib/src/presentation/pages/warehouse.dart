@@ -347,6 +347,7 @@ class _WarehouseState extends State<Warehouse> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text('Актуальное количество: ${element.quantity}'),
                   _buildUpdateQuantityTextField(setState),
                 ],
               ),
