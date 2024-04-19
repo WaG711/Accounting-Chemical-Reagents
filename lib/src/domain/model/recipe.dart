@@ -1,9 +1,9 @@
-import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/reagent_warehouse.dart';
 
 class RecipeModel {
   final int? id;
   final bool status;
-  final List<Reagent> reagents;
+  final List<ReagentWarehouse> reagents;
 
   const RecipeModel({
       this.id,
@@ -11,17 +11,16 @@ class RecipeModel {
       required this.reagents});
 
   Map<String, Object?> toMap() {
-    List<Map<String, Object?>> reagentsMap = reagents.map((reagent) => reagent.toMap()).toList();
+    List<Map<String, Object?>> reagentsMap = reagents.map((reagentWarehouse) => reagentWarehouse.toMap()).toList();
 
     return {
       'status': status ? 1 : 0,
-      'reagents': reagentsMap
       };
   }
 
   static RecipeModel fromMap(Map<String, dynamic> map) {
     List<dynamic> reagentsList = map['reagents'];
-    List<Reagent> reagents = reagentsList.map((reagentMap) => Reagent.fromMap(reagentMap)).toList();
+    List<ReagentWarehouse> reagents = reagentsList.map((reagentMap) => ReagentWarehouse.fromMap(reagentMap)).toList();
 
     return RecipeModel(
       id: map['id'],

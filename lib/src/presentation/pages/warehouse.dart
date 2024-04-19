@@ -25,6 +25,16 @@ class _WarehouseState extends State<Warehouse> {
     _fetchDataFuture = _fetchWarehouseData();
   }
 
+  Future<List<WarehouseModel>> _fetchWarehouseData() async {
+    return WarehouseRepository().getElements();
+  }
+
+  void _refreshData() {
+    setState(() {
+      _fetchDataFuture = _fetchWarehouseData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,16 +48,6 @@ class _WarehouseState extends State<Warehouse> {
         ],
       ),
     );
-  }
-
-  Future<List<WarehouseModel>> _fetchWarehouseData() async {
-    return WarehouseRepository().getElements();
-  }
-
-  void _refreshData() {
-    setState(() {
-      _fetchDataFuture = _fetchWarehouseData();
-    });
   }
 
   AppBar _buildAppBar() {

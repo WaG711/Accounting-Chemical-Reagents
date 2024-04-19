@@ -8,15 +8,13 @@ class DatabaseHelper {
         await db.execute(
             'CREATE TABLE reagents (id INTEGER PRIMARY KEY, name TEXT NOT NULL, formula TEXT NOT NULL)');
         await db.execute(
+            'CREATE TABLE reagent_warehouse (id INTEGER PRIMARY KEY, reagent_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE)');
+          await db.execute(
             'CREATE TABLE warehouse (id INTEGER PRIMARY KEY, reagent_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE)');
         await db.execute(
             'CREATE TABLE recipes (id INTEGER PRIMARY KEY, status INTEGER NOT NULL)');
         await db.execute(
-            'CREATE TABLE recipe_reagents (recipe_id INTEGER NOT NULL, reagent_id INTEGER NOT NULL, FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE, FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE, PRIMARY KEY (recipe_id, reagent_id))');
-        await db.execute(
             'CREATE TABLE ready_recipes (id INTEGER PRIMARY KEY)');
-        await db.execute(
-            'CREATE TABLE ready_recipe_reagents (ready_recipe_id INTEGER, reagent_id INTEGER, FOREIGN KEY (ready_recipe_id) REFERENCES ready_recipes(id) ON DELETE CASCADE, FOREIGN KEY (reagent_id) REFERENCES reagents(id) ON DELETE CASCADE, PRIMARY KEY (ready_recipe_id, reagent_id))');
       },
       version: 1,
     );

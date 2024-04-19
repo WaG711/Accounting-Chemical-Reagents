@@ -1,16 +1,16 @@
-import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/reagent_warehouse.dart';
 
 class ReadyRecipeModel {
   final int? id;
-  final List<Reagent> reagents;
+  final List<ReagentWarehouse> reagents;
 
   const ReadyRecipeModel({
       this.id,
       required this.reagents});
 
   Map<String, Object?> toMap() {
-    List<Map<String, Object?>> reagentsMap = reagents.map((reagent) => reagent.toMap()).toList();
+    List<Map<String, Object?>> reagentsMap = reagents.map((reagentWarehouse) => reagentWarehouse.toMap()).toList();
 
-    return {'reagents': reagentsMap};
+    return {};
   }
 }

@@ -23,4 +23,23 @@ class RecipeRepository {
       return RecipeModel.fromMap(maps[index]);
     });
   }
+
+  Future<void> updateRecipe(RecipeModel updatedRecipe) async {
+    final database = await _getDatabase();
+    await database.update(
+      nameTable,
+      updatedRecipe.toMap(),
+      where: 'id = ?',
+      whereArgs: [updatedRecipe.id],
+    );
+  }
+
+  Future<void> deleteRecipe(int id) async {
+    final database = await _getDatabase();
+    await database.delete(
+      nameTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
