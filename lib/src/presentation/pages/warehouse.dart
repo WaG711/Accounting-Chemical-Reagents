@@ -53,7 +53,7 @@ class _WarehouseState extends State<Warehouse> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       title: const Text(
-        'Управление складом',
+        'Склад',
         style: TextStyle(color: Colors.white),
       ),
       backgroundColor: Colors.green[300],
