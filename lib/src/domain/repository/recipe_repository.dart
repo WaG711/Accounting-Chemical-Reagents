@@ -6,12 +6,14 @@ class RecipeRepository {
   final String nameTable = 'recipes';
 
   Future<Database> _getDatabase() async {
-    return openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
+    return openDatabase(
+        join(await getDatabasesPath(), 'chemical_reagents_database.db'));
   }
 
   Future<int> insertRecipe(RecipeModel recipe) async {
     final database = await _getDatabase();
-    return await database.insert(nameTable, recipe.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await database.insert(nameTable, recipe.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<RecipeModel>> getRecipes() async {

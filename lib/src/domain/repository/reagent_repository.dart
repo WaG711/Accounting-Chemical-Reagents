@@ -6,12 +6,14 @@ class ReagentRepository {
   final String nameTable = 'reagents';
 
   Future<Database> _getDatabase() async {
-    return openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
+    return openDatabase(
+        join(await getDatabasesPath(), 'chemical_reagents_database.db'));
   }
 
   Future<int> insertReagent(Reagent reagent) async {
     final database = await _getDatabase();
-    return await database.insert(nameTable, reagent.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await database.insert(nameTable, reagent.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<Reagent>> getReagents() async {
@@ -27,7 +29,8 @@ class ReagentRepository {
 
   Future<Reagent> getReagentById(int reagentId) async {
     final database = await _getDatabase();
-    final List<Map<String, dynamic>> maps = await database.query(nameTable, where: 'id = ?', whereArgs: [reagentId]);
+    final List<Map<String, dynamic>> maps = await database
+        .query(nameTable, where: 'id = ?', whereArgs: [reagentId]);
     return Reagent.fromMap(maps.first);
   }
 

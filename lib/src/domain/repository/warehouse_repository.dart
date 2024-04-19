@@ -6,20 +6,34 @@ class WarehouseRepository {
   final String nameTable = 'warehouse';
 
   Future<Database> _getDatabase() async {
-    return openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
+    return openDatabase(
+        join(await getDatabasesPath(), 'chemical_reagents_database.db'));
   }
 
   Future<int> insertElement(WarehouseModel warehouse) async {
     final database = await _getDatabase();
-    return await database.insert(nameTable, warehouse.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await database.insert(nameTable, warehouse.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<WarehouseModel>> getElements() async {
     final database = await _getDatabase();
     final List<Map<String, dynamic>> maps = await database.query(nameTable);
-    return List.generate(maps.length, (index) {
+    return List.generate(
+      maps.length,
+      (index) {
         return WarehouseModel.fromMap(maps[index]);
       },
+    );
+  }
+
+  Future<void> updateElement(WarehouseModel updatedWarehouse) async {
+    final database = await _getDatabase();
+    await database.update(
+      nameTable,
+      updatedWarehouse.toMap(),
+      where: 'id = ?',
+      whereArgs: [updatedWarehouse.id],
     );
   }
 

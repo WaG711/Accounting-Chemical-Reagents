@@ -25,6 +25,21 @@ class _WarehouseState extends State<Warehouse> {
     _fetchDataFuture = _fetchWarehouseData();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      endDrawer: MyWidgets.buildDrawer(context),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: _buildWaitingRecipes()),
+          Expanded(child: _buildWarehouseResources()),
+        ],
+      ),
+    );
+  }
+
   Future<List<WarehouseModel>> _fetchWarehouseData() async {
     return WarehouseRepository().getElements();
   }
@@ -94,6 +109,31 @@ class _WarehouseState extends State<Warehouse> {
           },
         ))
       ],
+    );
+  }
+
+  Widget _buildWarehouseResources() {
+    return Column(
+      children: [
+        _buildInterfaceWarehouseResource(),
+        Expanded(child: _buildResources())
+      ],
+    );
+  }
+
+  Widget _buildInterfaceWarehouseResource() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Ресурсы на складе',
+            style: TextStyle(fontSize: 20),
+          ),
+          _buildAddToWarehouseButton(),
+        ],
+      ),
     );
   }
 
@@ -196,28 +236,7 @@ class _WarehouseState extends State<Warehouse> {
           _refreshData();
           Navigator.of(context).pop();
         } else {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Ошибка'),
-                content: const Text('Все поля должны быть заполнены'),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(
-                        'OK',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  )
-                ],
-              );
-            },
-          );
+          _showErrorDialog();
         }
       },
       style: ElevatedButton.styleFrom(
@@ -230,19 +249,28 @@ class _WarehouseState extends State<Warehouse> {
     );
   }
 
-  Widget _buildInterfaceWarehouseResource() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Ресурсы на складе',
-            style: TextStyle(fontSize: 20),
-          ),
-          _buildAddToWarehouseButton(),
-        ],
-      ),
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Ошибка'),
+          content: const Text('Все поля должны быть заполнены'),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 
@@ -287,9 +315,9 @@ class _WarehouseState extends State<Warehouse> {
                       subtitle: Text('Количество: ${element.quantity}'),
                       trailing: IconButton(
                         onPressed: () {
-                          _refreshData();
+                          _showUpdateWarehouseDialog(element);
                         },
-                        icon: const Icon(Icons.update),
+                        icon: const Icon(Icons.add_home_rounded, size: 40),
                       ),
                     ),
                   ),
@@ -306,26 +334,68 @@ class _WarehouseState extends State<Warehouse> {
     );
   }
 
-  Widget _buildWarehouseResources() {
-    return Column(
-      children: [
-        _buildInterfaceWarehouseResource(),
-        Expanded(child: _buildResources())
-      ],
+  void _showUpdateWarehouseDialog(WarehouseModel element) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Center(
+                child: Text('Прибавить количество'),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildUpdateQuantityTextField(setState),
+                ],
+              ),
+              actions: [
+                _buildUpdateWarehouseDialogButton(element),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      endDrawer: MyWidgets.buildDrawer(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: _buildWaitingRecipes()),
-          Expanded(child: _buildWarehouseResources()),
-        ],
+  Widget _buildUpdateQuantityTextField(Function setState) {
+    return TextField(
+      decoration: const InputDecoration(
+        labelText: 'Прибавить на',
+      ),
+      keyboardType: TextInputType.number,
+      onChanged: (value) {
+        setState(() {
+          quantity = int.tryParse(value);
+        });
+      },
+    );
+  }
+
+  Widget _buildUpdateWarehouseDialogButton(WarehouseModel element) {
+    return ElevatedButton(
+      onPressed: () {
+        if (quantity != null) {
+          WarehouseModel warehouse = WarehouseModel(
+            id: element.id,
+            reagentId: element.reagentId,
+            quantity: element.quantity + quantity!,
+          );
+          WarehouseRepository().updateElement(warehouse);
+          _refreshData();
+          Navigator.of(context).pop();
+        } else {
+          _showErrorDialog();
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[300],
+      ),
+      child: const Text(
+        'Прибавить',
+        style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
   }
