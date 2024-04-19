@@ -3,14 +3,20 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WarehouseRepository {
+  final String nameTable = 'warehouse';
+
+  Future<Database> _getDatabase() async {
+    return openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
+  }
+
   Future<int> insertElement(WarehouseModel warehouse) async {
-    final database = await openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
-    return await database.insert('warehouse', warehouse.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    final database = await _getDatabase();
+    return await database.insert(nameTable, warehouse.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<WarehouseModel>> getElements() async {
-    final database = await openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
-    final List<Map<String, dynamic>> maps = await database.query('warehouse');
+    final database = await _getDatabase();
+    final List<Map<String, dynamic>> maps = await database.query(nameTable);
     return List.generate(maps.length, (index) {
         return WarehouseModel.fromMap(maps[index]);
       },
@@ -18,9 +24,9 @@ class WarehouseRepository {
   }
 
   Future<void> deleteElement(int id) async {
-    final database = await openDatabase(join(await getDatabasesPath(), 'chemical_reagents_database.db'));
+    final database = await _getDatabase();
     await database.delete(
-      'warehouse',
+      nameTable,
       where: 'id = ?',
       whereArgs: [id],
     );

@@ -17,7 +17,8 @@ class Entrance extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                 backgroundColor: Colors.blue[300]),
-            child: const Text('Собрать рецепт',
+            child: const Text(
+              'Собрать рецепт',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,
@@ -29,7 +30,8 @@ class Entrance extends StatelessWidget {
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/warehouse');
             },
-            child: const Text('Управление складом',
+            child: const Text(
+              'Управление складом',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 22,

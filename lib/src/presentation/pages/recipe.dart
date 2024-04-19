@@ -13,7 +13,8 @@ class _RecipeState extends State<Recipe> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Рецепт',
+          title: const Text(
+            'Рецепт',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.blue[300],
