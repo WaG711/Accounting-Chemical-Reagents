@@ -1,7 +1,6 @@
 import 'package:accounting_chemical_reagents/src/presentation/pages/collect_recipe.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/pending_recipes.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/ready_recipes.dart';
-import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
 
 class RecipeBase extends StatefulWidget {
@@ -17,24 +16,11 @@ class _RecipeBaseState extends State<RecipeBase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _buildAppBar(context),
-        endDrawer: MyWidgets.buildDrawer(context),
-        body: _buildSelectedContent(context),
-        bottomNavigationBar: _buildBottomNavigationBar(context));
+        body: _buildSelectedContent(),
+        bottomNavigationBar: _buildBottomNavigationBar());
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(
-        'Рецепт',
-        style: TextStyle(color: Colors.white),
-      ),
-      backgroundColor: Colors.blue[300],
-      iconTheme: const IconThemeData(color: Colors.white),
-    );
-  }
-
-  Widget _buildSelectedContent(BuildContext context) {
+  Widget _buildSelectedContent() {
     switch (_selectedIndex) {
       case 0:
         return const ReadyRecipe();
@@ -47,7 +33,7 @@ class _RecipeBaseState extends State<RecipeBase> {
     }
   }
 
-  BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
+  BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(

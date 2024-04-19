@@ -28,7 +28,7 @@ class _WarehouseState extends State<Warehouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,7 +50,7 @@ class _WarehouseState extends State<Warehouse> {
     });
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar() {
     return AppBar(
       title: const Text(
         'Склад',
