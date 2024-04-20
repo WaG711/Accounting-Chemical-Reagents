@@ -1,7 +1,9 @@
 import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
-import 'package:accounting_chemical_reagents/src/domain/model/reagent_warehouse.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/reagents_recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/recipe_reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_repository.dart';
 import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,7 @@ class CollectRecipe extends StatefulWidget {
 }
 
 class _CollectRecipStateState extends State<CollectRecipe> {
-  List<ReagentWarehouse> reagentWarehouse = [];
+  List<ReagentsRecipe> reagentsRecipe = [];
   Reagent? selectedReagent;
   int? quantity;
 
@@ -23,7 +25,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return Scaffold(
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
-      body: _buildReagentWarehouse(),
+      body: _buildReagentsRecipe(),
     );
   }
 
@@ -38,58 +40,40 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
-  Widget _buildReagentWarehouse() {
+  Widget _buildReagentsRecipe() {
     return Column(
       children: [
-        _buildInterfaceReagentWarehouse(),
-        Expanded(child: _buildResources())
+        Expanded(child: _buildResources()),
+        _buildInterfaceReagentsRecipe()
       ],
     );
   }
 
-  Widget _buildInterfaceReagentWarehouse() {
+  Widget _buildInterfaceReagentsRecipe() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(10, 1, 10, 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildAddToReagentWarehouseButton(),
-          ElevatedButton(
-              onPressed: () {
-                if (reagentWarehouse.isNotEmpty) {
-                  RecipeModel recipe = RecipeModel(status: false, reagents: reagentWarehouse);
-                  RecipeRepository().insertRecipe(recipe);
-                  setState(() {
-                    reagentWarehouse.clear();
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[300],
-              ),
-              child: const Text(
-                'Оформить рецепт',
-                style: TextStyle(color: Colors.white),
-              ))
+          _buildReadyRecipesButton(),
+          _buildOrderRecipeButton(),
+          _buildAddToReagentsRecipeButton()
         ],
       ),
     );
   }
 
-  Widget _buildAddToReagentWarehouseButton() {
-    return ElevatedButton(
-      onPressed: _showAddToReagentWarehouseDialog,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[300],
-      ),
-      child: const Text(
-        'Добавить в рецепт',
-        style: TextStyle(color: Colors.white),
+  Widget _buildAddToReagentsRecipeButton() {
+    return IconButton(
+      onPressed: _showAddToReagentsRecipeDialog,
+      icon: const Icon(
+        Icons.add_rounded,
+        size: 40,
       ),
     );
   }
 
-  void _showAddToReagentWarehouseDialog() {
+  void _showAddToReagentsRecipeDialog() {
     showDialog(
       context: context,
       builder: (context) {
@@ -108,7 +92,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 ],
               ),
               actions: [
-                _buildAddToReagentWarehouseDialogButton(),
+                _buildAddToReagentsRecipeDialogButton(),
               ],
             );
           },
@@ -119,34 +103,33 @@ class _CollectRecipStateState extends State<CollectRecipe> {
 
   Widget _buildReagentDropdown(Function setState) {
     return FutureBuilder<List<Reagent>>(
-      future: ReagentRepository().getReagents(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Ошибка: ${snapshot.error}');
-        } else {
-          List<Reagent> reagents = snapshot.data!;
-          return DropdownButtonFormField<int>(
-            value: selectedReagent?.id,
-            items: reagents.map((reagent) {
-              return DropdownMenuItem<int>(
-                value: reagent.id,
-                child: Text(reagent.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'Выберите реагент',
-            ),
-          );
-        }
-      },
-    );
+        future: ReagentRepository().getReagents(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Ошибка: ${snapshot.error}');
+          } else {
+            List<Reagent> reagents = snapshot.data!;
+            return DropdownButtonFormField<int>(
+              value: selectedReagent?.id,
+              items: reagents.map((reagent) {
+                return DropdownMenuItem<int>(
+                  value: reagent.id,
+                  child: Text(reagent.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Выберите реагент',
+              ),
+            );
+          }
+        });
   }
 
   Widget _buildQuantityTextField(Function setState) {
@@ -163,16 +146,16 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
-  Widget _buildAddToReagentWarehouseDialogButton() {
+  Widget _buildAddToReagentsRecipeDialogButton() {
     return ElevatedButton(
       onPressed: () {
         if (selectedReagent != null && quantity != null) {
-          ReagentWarehouse newReagent = ReagentWarehouse(
+          ReagentsRecipe newReagent = ReagentsRecipe(
             reagentId: selectedReagent!.id!,
             quantity: quantity!,
           );
           setState(() {
-            reagentWarehouse.add(newReagent);
+            reagentsRecipe.add(newReagent);
           });
           Navigator.of(context).pop();
         } else {
@@ -214,11 +197,44 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
+  Widget _buildOrderRecipeButton() {
+    return ElevatedButton(
+        onPressed: () {
+          if (reagentsRecipe.isNotEmpty) {
+            _addRecipeReagent(reagentsRecipe);
+          } else {
+            _showErrorDialog();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Оформить рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ));
+  }
+
+  Widget _buildReadyRecipesButton() {
+    return IconButton(
+      onPressed: _showReadyRecipesDialog,
+      icon: const Icon(Icons.receipt_long_rounded, size: 40),
+    );
+  }
+
+  void _showReadyRecipesDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog();
+        });
+  }
+
   Widget _buildResources() {
     return ListView.builder(
-      itemCount: reagentWarehouse.length,
+      itemCount: reagentsRecipe.length,
       itemBuilder: (context, index) {
-        ReagentWarehouse element = reagentWarehouse[index];
+        ReagentsRecipe element = reagentsRecipe[index];
         return Dismissible(
           key: UniqueKey(),
           child: Card(
@@ -238,15 +254,15 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               subtitle: Text('Количество: ${element.quantity}'),
               trailing: IconButton(
                 onPressed: () {
-                  _showUpdateReagentWarehouseDialog(element, index);
+                  _showUpdateReagentsRecipeDialog(element, index);
                 },
-                icon: const Icon(Icons.add_home_rounded, size: 40),
+                icon: const Icon(Icons.change_circle_rounded, size: 40),
               ),
             ),
           ),
           onDismissed: (direction) {
             setState(() {
-              reagentWarehouse.removeAt(index);
+              reagentsRecipe.removeAt(index);
             });
           },
         );
@@ -254,7 +270,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
-  void _showUpdateReagentWarehouseDialog(ReagentWarehouse element, int index) {
+  void _showUpdateReagentsRecipeDialog(ReagentsRecipe element, int index) {
     showDialog(
       context: context,
       builder: (context) {
@@ -272,7 +288,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 ],
               ),
               actions: [
-                _buildUpdateReagentWarehouseDialogButton(element, index),
+                _buildUpdateReagentsRecipeDialogButton(element, index),
               ],
             );
           },
@@ -295,17 +311,16 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
-  Widget _buildUpdateReagentWarehouseDialogButton(
-      ReagentWarehouse element, int index) {
+  Widget _buildUpdateReagentsRecipeDialogButton(ReagentsRecipe element, int index) {
     return ElevatedButton(
       onPressed: () {
         if (quantity != null) {
-          ReagentWarehouse newReagent = ReagentWarehouse(
+          ReagentsRecipe newReagent = ReagentsRecipe(
             reagentId: element.reagentId,
             quantity: quantity!,
           );
           setState(() {
-            reagentWarehouse[index] = newReagent;
+            reagentsRecipe[index] = newReagent;
           });
           Navigator.of(context).pop();
         } else {
@@ -320,5 +335,21 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
+  }
+
+  Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
+    RecipeModel recipe = const RecipeModel(status: false);
+    int recipeId = await RecipeRepository().insertRecipe(recipe);
+
+    for (var element in reagentsRecipe) {
+      RecipeReagent recipeReagent = RecipeReagent(
+          recipeId: recipeId,
+          reagentId: element.reagentId,
+          quantity: element.quantity);
+      await RecipeReagentRepository().insertRecipeReagent(recipeReagent);
+    }
+    setState(() {
+      reagentsRecipe.clear();
+    });
   }
 }

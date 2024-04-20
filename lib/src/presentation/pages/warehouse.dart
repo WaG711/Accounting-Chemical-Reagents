@@ -2,6 +2,7 @@ import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/warehouse.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/warehouse_repository.dart';
 import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
@@ -96,7 +97,7 @@ class _WarehouseState extends State<Warehouse> {
                     return ListTile(
                       key: UniqueKey(),
                       title: Text('Рецепт ${recipe.id}'),
-                      subtitle: Text('Реагенты: ${recipe.reagents.join(", ")}'),
+                      subtitle: _buildReagentNames(recipe.id!),
                       trailing: ElevatedButton(
                         onPressed: () {},
                         child: const Text('Принять'),
@@ -398,6 +399,35 @@ class _WarehouseState extends State<Warehouse> {
         'Прибавить',
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
+    );
+  }
+
+  Future<String> _getReagents(int recipeId) async {
+    List<int> ids = await RecipeReagentRepository().getReagentIdsForRecipe(recipeId);
+    String reagentsName = '';
+
+    for (int i = 0; i < ids.length; i++) {
+      Reagent reagent = await ReagentRepository().getReagentById(ids[i]);
+      reagentsName += reagent.name;
+      if (i < ids.length - 1) {
+        reagentsName += ', ';
+      }
+    }
+    return reagentsName;
+  }
+
+  Widget _buildReagentNames(int recipeId) {
+    return FutureBuilder(
+      future: _getReagents(recipeId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return Text('Реагенты: ${snapshot.data}');
+        }
+      },
     );
   }
 }
