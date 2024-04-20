@@ -11,7 +11,7 @@ class DatabaseHelper {
         await db.execute(
             'CREATE TABLE warehouse (id INTEGER PRIMARY KEY, reagent_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY (reagent_id) REFERENCES reagents(id))');
         await db.execute(
-            'CREATE TABLE recipes (id INTEGER PRIMARY KEY, status INTEGER NOT NULL)');
+            'CREATE TABLE recipes (id INTEGER PRIMARY KEY, isAccepted INTEGER NOT NULL, isEnough INTEGER NOT NULL)');
         await db.execute(
             'CREATE TABLE recipe_reagent (recipe_id INTEGER, reagent_id INTEGER, quantity INTEGER NOT NULL, FOREIGN KEY (recipe_id) REFERENCES recipes(id), FOREIGN KEY (reagent_id) REFERENCES reagents(id), PRIMARY KEY (recipe_id, reagent_id))');
         await db.execute(

@@ -288,7 +288,9 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 ],
               ),
               actions: [
-                _buildUpdateReagentsRecipeDialogButton(element, index),
+                Center(
+                  child: _buildUpdateReagentsRecipeDialogButton(element, index),
+                )
               ],
             );
           },
@@ -338,7 +340,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
-    RecipeModel recipe = const RecipeModel(status: false);
+    RecipeModel recipe = const RecipeModel(isAccepted: false, isEnough: true);
     int recipeId = await RecipeRepository().insertRecipe(recipe);
 
     for (var element in reagentsRecipe) {

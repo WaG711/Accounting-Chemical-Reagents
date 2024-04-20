@@ -1,17 +1,21 @@
 class RecipeModel {
   final int? id;
-  final bool status;
+  final bool isAccepted;
+  final bool isEnough;
 
-  const RecipeModel({this.id, required this.status});
+  const RecipeModel({this.id, required this.isAccepted, required this.isEnough});
 
   Map<String, Object?> toMap() {
-    return {'status': status ? 1 : 0};
+    return {
+      'isAccepted': isAccepted ? 1 : 0,
+      'isEnough': isEnough ? 1 : 0,};
   }
 
   static RecipeModel fromMap(Map<String, dynamic> map) {
     return RecipeModel(
       id: map['id'],
-      status: map['status'] == 1,
+      isAccepted: map['isAccepted'] == 1,
+      isEnough: map['isEnough'] == 1
     );
   }
 }

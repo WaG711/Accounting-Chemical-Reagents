@@ -39,7 +39,7 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<List<RecipeModel>> _fetchRecipesData() async {
-    return RecipeRepository().getRecipesFalse();
+    return RecipeRepository().getRecipesAcceptedFalse();
   }
 
   void _refreshRecipesData() {
@@ -364,7 +364,9 @@ class _WarehouseState extends State<Warehouse> {
                 ],
               ),
               actions: [
-                _buildUpdateWarehouseDialogButton(element),
+                Center(
+                  child: _buildUpdateWarehouseDialogButton(element),
+                )
               ],
             );
           },
@@ -424,7 +426,9 @@ class _WarehouseState extends State<Warehouse> {
                 children: [_buildReagentNames(recipe.id!)],
               ),
               actions: [
-                _buildUpdateRecipeButton(recipe),
+                Center(
+                  child: _buildUpdateRecipeButton(recipe),
+                )
               ],
             );
           });
@@ -432,7 +436,7 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Widget _buildUpdateRecipeButton(RecipeModel recipe) {
-    RecipeModel processedRecipe = RecipeModel(id: recipe.id, status: true);
+    RecipeModel processedRecipe = RecipeModel(id: recipe.id, isAccepted: true, isEnough: true);
     return ElevatedButton(
       onPressed: () {
         RecipeRepository().updateRecipe(processedRecipe);

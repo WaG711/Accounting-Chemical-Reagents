@@ -16,12 +16,24 @@ class RecipeRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<List<RecipeModel>> getRecipesAcceptedFalse() async {
+    final database = await _getDatabase();
+    final List<Map<String, dynamic>> maps = await database.query(
+      nameTable,
+      where: 'isAccepted = ? AND isEnough = ?',
+      whereArgs: [false, true],
+    );
+    return List.generate(maps.length, (index) {
+      return RecipeModel.fromMap(maps[index]);
+    });
+  }
+
   Future<List<RecipeModel>> getRecipesFalse() async {
     final database = await _getDatabase();
     final List<Map<String, dynamic>> maps = await database.query(
       nameTable,
-      where: 'status = ?',
-      whereArgs: [false],
+      where: 'isAccepted = ? AND isEnough = ?',
+      whereArgs: [false, false],
     );
     return List.generate(maps.length, (index) {
       return RecipeModel.fromMap(maps[index]);
@@ -32,7 +44,7 @@ class RecipeRepository {
     final database = await _getDatabase();
     final List<Map<String, dynamic>> maps = await database.query(
       nameTable,
-      where: 'status = ?',
+      where: 'isAccepted = ?',
       whereArgs: [true],
     );
     return List.generate(maps.length, (index) {
