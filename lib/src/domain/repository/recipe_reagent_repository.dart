@@ -24,17 +24,15 @@ class RecipeReagentRepository {
     });
   }
 
-  Future<List<int>> getReagentIdsForRecipe(int recipeId) async {
+  Future<List<Map<String, dynamic>>> getReagentsForRecipe(int recipeId) async {
     final database = await _getDatabase();
-    final List<Map<String, dynamic>> maps = await database.query(
+    final List<Map<String, dynamic>> reagents = await database.query(
       nameTable,
-      columns: ['reagent_id'],
+      columns: ['reagent_id', 'quantity'],
       where: 'recipe_id = ?',
       whereArgs: [recipeId],
     );
-    return List.generate(maps.length, (index) {
-      return maps[index]['reagent_id'] as int;
-    });
+    return reagents;
   }
 
   Future<void> deleteRecipeReagent(int id) async {

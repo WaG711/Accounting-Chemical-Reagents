@@ -16,9 +16,25 @@ class RecipeRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<RecipeModel>> getRecipes() async {
+  Future<List<RecipeModel>> getRecipesFalse() async {
     final database = await _getDatabase();
-    final List<Map<String, dynamic>> maps = await database.query(nameTable);
+    final List<Map<String, dynamic>> maps = await database.query(
+      nameTable,
+      where: 'status = ?',
+      whereArgs: [false],
+    );
+    return List.generate(maps.length, (index) {
+      return RecipeModel.fromMap(maps[index]);
+    });
+  }
+
+  Future<List<RecipeModel>> getRecipesTrue() async {
+    final database = await _getDatabase();
+    final List<Map<String, dynamic>> maps = await database.query(
+      nameTable,
+      where: 'status = ?',
+      whereArgs: [true],
+    );
     return List.generate(maps.length, (index) {
       return RecipeModel.fromMap(maps[index]);
     });
