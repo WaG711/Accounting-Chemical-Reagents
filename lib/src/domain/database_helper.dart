@@ -15,7 +15,7 @@ class DatabaseHelper {
         await db.execute(
             'CREATE TABLE recipe_reagent (recipe_id INTEGER, reagent_id INTEGER, quantity INTEGER NOT NULL, FOREIGN KEY (recipe_id) REFERENCES recipes(id), FOREIGN KEY (reagent_id) REFERENCES reagents(id), PRIMARY KEY (recipe_id, reagent_id))');
         await db.execute(
-          'CREATE TABLE ready_recipes (id INTEGER PRIMARY KEY)');
+          'CREATE TABLE ready_recipes (id INTEGER PRIMARY KEY, name TEXT NOT NULL)');
         await db.execute(
             'CREATE TABLE ready_recipe_reagent (ready_recipe_id INTEGER, reagent_id INTEGER, quantity INTEGER NOT NULL, FOREIGN KEY (ready_recipe_id) REFERENCES ready_recipes(id), FOREIGN KEY (reagent_id) REFERENCES reagents(id), PRIMARY KEY (ready_recipe_id, reagent_id))');
       },
