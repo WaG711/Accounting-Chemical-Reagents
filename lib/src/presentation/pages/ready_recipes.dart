@@ -86,7 +86,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
                     ReadyRecipeModel readyRecipe = readyRecipes[index];
                     return ExpansionTile(
                       title: Text(
-                        '№${readyRecipe.id}',
+                        readyRecipe.name,
                         style: const TextStyle(fontSize: 22),
                       ),
                       children: [_showRecipeInfo(readyRecipe)],

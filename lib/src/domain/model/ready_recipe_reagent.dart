@@ -10,7 +10,7 @@ class ReadyRecipeReagent {
 
   Map<String, dynamic> toMap() {
     return {
-      'recipe_id': readyRecipeId,
+      'ready_recipe_id': readyRecipeId,
       'reagent_id': reagentId,
       'quantity': quantity,
     };
