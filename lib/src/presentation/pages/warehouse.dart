@@ -106,13 +106,11 @@ class _WarehouseState extends State<Warehouse> {
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
-                    return ListTile(
-                        key: UniqueKey(),
-                        title: Text('Номер рецепта - ${recipe.id}',
-                            style: const TextStyle(fontSize: 20)),
-                        onTap: () {
-                          _showRecipeInfoDialog(recipe);
-                        });
+                    return ExpansionTile(
+                      title: Text('№${recipe.id}',
+                      style: const TextStyle(fontSize: 22),),
+                      children: [_showRecipeInfo(recipe)],
+                    );
                   },
                 );
               }
@@ -123,27 +121,19 @@ class _WarehouseState extends State<Warehouse> {
     );
   }
 
-  void _showRecipeInfoDialog(RecipeModel recipe) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [_buildReagentNames(recipe.id!)],
-              ),
-              actions: [
-                Center(
-                  child: _buildUpdateRecipeButton(recipe),
-                )
-              ],
-            );
-          });
-        });
+  Widget _showRecipeInfo(RecipeModel recipe) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildReagentsInfo(recipe.id!),
+        Center(
+          child: _buildUpdateRecipeButton(recipe),
+        )
+      ],
+    );
   }
 
-  Widget _buildReagentNames(int recipeId) {
+  Widget _buildReagentsInfo(int recipeId) {
     return FutureBuilder(
       future: _getReagentsInfo(recipeId),
       builder: (context, snapshot) {
@@ -159,7 +149,8 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<String> _getReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    List<Map<String, dynamic>> reagents =
+        await RecipeReagentRepository().getReagentsForRecipe(recipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {
@@ -181,7 +172,6 @@ class _WarehouseState extends State<Warehouse> {
       onPressed: () {
         RecipeRepository().updateRecipe(processedRecipe);
         _refreshRecipesData();
-        Navigator.of(context).pop();
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green[300],
