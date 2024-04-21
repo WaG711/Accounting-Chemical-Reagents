@@ -27,6 +27,21 @@ class WarehouseRepository {
     );
   }
 
+  Future<WarehouseModel?> getElementByReagentId(int reagentId) async {
+    final database = await _getDatabase();
+    final List<Map<String, dynamic>> maps = await database.query(
+      nameTable,
+      where: 'reagent_id = ?',
+      whereArgs: [reagentId],
+      limit: 1,
+    );
+    if (maps.isNotEmpty) {
+      return WarehouseModel.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
+
   Future<void> updateElement(WarehouseModel updatedWarehouse) async {
     final database = await _getDatabase();
     await database.update(

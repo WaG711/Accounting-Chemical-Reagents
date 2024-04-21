@@ -108,9 +108,8 @@ class _WarehouseState extends State<Warehouse> {
                     RecipeModel recipe = recipes[index];
                     return ListTile(
                         key: UniqueKey(),
-                        title: Text(
-                          'Номер рецепта - ${recipe.id}',
-                          style: const TextStyle(fontSize: 20)),
+                        title: Text('Номер рецепта - ${recipe.id}',
+                            style: const TextStyle(fontSize: 20)),
                         onTap: () {
                           _showRecipeInfoDialog(recipe);
                         });
@@ -121,6 +120,76 @@ class _WarehouseState extends State<Warehouse> {
           },
         ))
       ],
+    );
+  }
+
+  void _showRecipeInfoDialog(RecipeModel recipe) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [_buildReagentNames(recipe.id!)],
+              ),
+              actions: [
+                Center(
+                  child: _buildUpdateRecipeButton(recipe),
+                )
+              ],
+            );
+          });
+        });
+  }
+
+  Widget _buildReagentNames(int recipeId) {
+    return FutureBuilder(
+      future: _getReagentsInfo(recipeId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Ошибка: ${snapshot.error}');
+        } else {
+          return Text('${snapshot.data}', style: const TextStyle(fontSize: 24));
+        }
+      },
+    );
+  }
+
+  Future<String> _getReagentsInfo(int recipeId) async {
+    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    String reagentsInfo = '';
+
+    for (int i = 0; i < reagents.length; i++) {
+      int reagentId = reagents[i]['reagent_id'] as int;
+      int quantity = reagents[i]['quantity'] as int;
+
+      Reagent reagent = await ReagentRepository().getReagentById(reagentId);
+      reagentsInfo += '${reagent.name} - $quantity';
+      if (i < reagents.length - 1) {
+        reagentsInfo += '\n';
+      }
+    }
+    return reagentsInfo;
+  }
+
+  Widget _buildUpdateRecipeButton(RecipeModel recipe) {
+    RecipeModel processedRecipe = RecipeModel(id: recipe.id, isAccepted: true, isEnough: true);
+    return ElevatedButton(
+      onPressed: () {
+        RecipeRepository().updateRecipe(processedRecipe);
+        _refreshRecipesData();
+        Navigator.of(context).pop();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[300],
+      ),
+      child: const Text(
+        'Оформить',
+        style: TextStyle(color: Colors.white, fontSize: 22),
+      ),
     );
   }
 
@@ -240,12 +309,7 @@ class _WarehouseState extends State<Warehouse> {
     return ElevatedButton(
       onPressed: () {
         if (selectedReagent != null && quantity != null) {
-          WarehouseModel warehouse = WarehouseModel(
-            reagentId: selectedReagent!.id!,
-            quantity: quantity!,
-          );
-          WarehouseRepository().insertElement(warehouse);
-          _refreshWarehouseData();
+          _addToWarehouse();
           Navigator.of(context).pop();
         } else {
           _showErrorDialog();
@@ -259,6 +323,27 @@ class _WarehouseState extends State<Warehouse> {
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
+  }
+
+  Future<void> _addToWarehouse() async {
+    WarehouseModel? existingWarehouse =
+        await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
+
+    if (existingWarehouse != null) {
+      WarehouseModel warehouse = WarehouseModel(
+        id: existingWarehouse.id,
+        reagentId: existingWarehouse.reagentId,
+        quantity: existingWarehouse.quantity + quantity!,
+      );
+      WarehouseRepository().updateElement(warehouse);
+    } else {
+      WarehouseModel warehouse = WarehouseModel(
+        reagentId: selectedReagent!.id!,
+        quantity: quantity!,
+      );
+      WarehouseRepository().insertElement(warehouse);
+    }
+    _refreshWarehouseData();
   }
 
   void _showErrorDialog() {
@@ -412,76 +497,6 @@ class _WarehouseState extends State<Warehouse> {
         'Прибавить',
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
-    );
-  }
-
-  void _showRecipeInfoDialog(RecipeModel recipe) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [_buildReagentNames(recipe.id!)],
-              ),
-              actions: [
-                Center(
-                  child: _buildUpdateRecipeButton(recipe),
-                )
-              ],
-            );
-          });
-        });
-  }
-
-  Widget _buildUpdateRecipeButton(RecipeModel recipe) {
-    RecipeModel processedRecipe = RecipeModel(id: recipe.id, isAccepted: true, isEnough: true);
-    return ElevatedButton(
-      onPressed: () {
-        RecipeRepository().updateRecipe(processedRecipe);
-        _refreshRecipesData();
-        Navigator.of(context).pop();
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green[300],
-      ),
-      child: const Text(
-        'Оформить',
-        style: TextStyle(color: Colors.white, fontSize: 22),
-      ),
-    );
-  }
-
-  Future<String> _getReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
-    String reagentsInfo = '';
-
-    for (int i = 0; i < reagents.length; i++) {
-      int reagentId = reagents[i]['reagent_id'] as int;
-      int quantity = reagents[i]['quantity'] as int;
-
-      Reagent reagent = await ReagentRepository().getReagentById(reagentId);
-      reagentsInfo += '${reagent.name} - $quantity';
-      if (i < reagents.length - 1) {
-        reagentsInfo += '\n';
-      }
-    }
-    return reagentsInfo;
-  }
-
-  Widget _buildReagentNames(int recipeId) {
-    return FutureBuilder(
-      future: _getReagentsInfo(recipeId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Ошибка: ${snapshot.error}');
-        } else {
-          return Text('${snapshot.data}', style: const TextStyle(fontSize: 24));
-        }
-      },
     );
   }
 }

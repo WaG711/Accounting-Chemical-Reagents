@@ -1,6 +1,6 @@
 class ReagentsRecipe {
-  final int reagentId;
-  final int quantity;
+  int reagentId;
+  int quantity;
 
   ReagentsRecipe({required this.reagentId, required this.quantity});
 }

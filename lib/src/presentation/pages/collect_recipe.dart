@@ -49,6 +49,141 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
+  Widget _buildResources() {
+    return ListView.builder(
+      itemCount: reagentsRecipe.length,
+      itemBuilder: (context, index) {
+        ReagentsRecipe element = reagentsRecipe[index];
+        return Dismissible(
+          key: UniqueKey(),
+          child: Card(
+            child: ListTile(
+              title: FutureBuilder<Reagent>(
+                future: ReagentRepository().getReagentById(element.reagentId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Ошибка: ${snapshot.error}');
+                  } else {
+                    return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
+                  }
+                },
+              ),
+              subtitle: Text('Количество: ${element.quantity}'),
+              trailing: IconButton(
+                onPressed: () {
+                  _showUpdateReagentsRecipeDialog(element, index);
+                },
+                icon: const Icon(Icons.change_circle_rounded, size: 40),
+              ),
+            ),
+          ),
+          onDismissed: (direction) {
+            setState(() {
+              reagentsRecipe.removeAt(index);
+            });
+          },
+        );
+      },
+    );
+  }
+
+  void _showUpdateReagentsRecipeDialog(ReagentsRecipe element, int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Center(
+                child: Text('Введите количество'),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Актуальное количество: ${element.quantity}'),
+                  _buildUpdateQuantityTextField(setState),
+                ],
+              ),
+              actions: [
+                Center(
+                  child: _buildUpdateReagentsRecipeDialogButton(element, index),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildUpdateQuantityTextField(Function setState) {
+    return TextField(
+      decoration: const InputDecoration(
+        labelText: 'Введите количество',
+      ),
+      keyboardType: TextInputType.number,
+      onChanged: (value) {
+        setState(() {
+          quantity = int.tryParse(value);
+        });
+      },
+    );
+  }
+
+  Widget _buildUpdateReagentsRecipeDialogButton(
+      ReagentsRecipe element, int index) {
+    return ElevatedButton(
+      onPressed: () {
+        if (quantity != null) {
+          ReagentsRecipe newReagent = ReagentsRecipe(
+            reagentId: element.reagentId,
+            quantity: quantity!,
+          );
+          setState(() {
+            reagentsRecipe[index] = newReagent;
+          });
+          Navigator.of(context).pop();
+        } else {
+          _showErrorDialog();
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue[300],
+      ),
+      child: const Text(
+        'Сохранить',
+        style: TextStyle(color: Colors.white, fontSize: 22),
+      ),
+    );
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Ошибка'),
+          content: const Text('Все поля должны быть заполнены'),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildInterfaceReagentsRecipe() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 1, 10, 15),
@@ -61,6 +196,55 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         ],
       ),
     );
+  }
+
+  Widget _buildReadyRecipesButton() {
+    return IconButton(
+      onPressed: _showReadyRecipesDialog,
+      icon: const Icon(Icons.receipt_long_rounded, size: 40),
+    );
+  }
+
+  void _showReadyRecipesDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog();
+        });
+  }
+
+  Widget _buildOrderRecipeButton() {
+    return ElevatedButton(
+        onPressed: () {
+          if (reagentsRecipe.isNotEmpty) {
+            _addRecipeReagent(reagentsRecipe);
+          } else {
+            _showErrorDialog();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Оформить рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ));
+  }
+
+  Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
+    RecipeModel recipe = const RecipeModel(isAccepted: false, isEnough: true);
+    int recipeId = await RecipeRepository().insertRecipe(recipe);
+
+    for (var element in reagentsRecipe) {
+      RecipeReagent recipeReagent = RecipeReagent(
+          recipeId: recipeId,
+          reagentId: element.reagentId,
+          quantity: element.quantity);
+      await RecipeReagentRepository().insertRecipeReagent(recipeReagent);
+    }
+    setState(() {
+      reagentsRecipe.clear();
+    });
   }
 
   Widget _buildAddToReagentsRecipeButton() {
@@ -150,13 +334,21 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return ElevatedButton(
       onPressed: () {
         if (selectedReagent != null && quantity != null) {
-          ReagentsRecipe newReagent = ReagentsRecipe(
-            reagentId: selectedReagent!.id!,
-            quantity: quantity!,
-          );
-          setState(() {
-            reagentsRecipe.add(newReagent);
-          });
+          int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == selectedReagent!.id);
+
+          if (existingIndex != -1) {
+            setState(() {
+              reagentsRecipe[existingIndex].quantity += quantity!;
+            });
+          } else {
+            ReagentsRecipe newReagent = ReagentsRecipe(
+              reagentId: selectedReagent!.id!,
+              quantity: quantity!,
+            );
+            setState(() {
+              reagentsRecipe.add(newReagent);
+            });
+          }
           Navigator.of(context).pop();
         } else {
           _showErrorDialog();
@@ -170,188 +362,5 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
-  }
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Ошибка'),
-          content: const Text('Все поля должны быть заполнены'),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildOrderRecipeButton() {
-    return ElevatedButton(
-        onPressed: () {
-          if (reagentsRecipe.isNotEmpty) {
-            _addRecipeReagent(reagentsRecipe);
-          } else {
-            _showErrorDialog();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[300],
-        ),
-        child: const Text(
-          'Оформить рецепт',
-          style: TextStyle(color: Colors.white, fontSize: 22),
-        ));
-  }
-
-  Widget _buildReadyRecipesButton() {
-    return IconButton(
-      onPressed: _showReadyRecipesDialog,
-      icon: const Icon(Icons.receipt_long_rounded, size: 40),
-    );
-  }
-
-  void _showReadyRecipesDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog();
-        });
-  }
-
-  Widget _buildResources() {
-    return ListView.builder(
-      itemCount: reagentsRecipe.length,
-      itemBuilder: (context, index) {
-        ReagentsRecipe element = reagentsRecipe[index];
-        return Dismissible(
-          key: UniqueKey(),
-          child: Card(
-            child: ListTile(
-              title: FutureBuilder<Reagent>(
-                future: ReagentRepository().getReagentById(element.reagentId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Ошибка: ${snapshot.error}');
-                  } else {
-                    return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
-                  }
-                },
-              ),
-              subtitle: Text('Количество: ${element.quantity}'),
-              trailing: IconButton(
-                onPressed: () {
-                  _showUpdateReagentsRecipeDialog(element, index);
-                },
-                icon: const Icon(Icons.change_circle_rounded, size: 40),
-              ),
-            ),
-          ),
-          onDismissed: (direction) {
-            setState(() {
-              reagentsRecipe.removeAt(index);
-            });
-          },
-        );
-      },
-    );
-  }
-
-  void _showUpdateReagentsRecipeDialog(ReagentsRecipe element, int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Center(
-                child: Text('Введите количество'),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Актуальное количество: ${element.quantity}'),
-                  _buildUpdateQuantityTextField(setState),
-                ],
-              ),
-              actions: [
-                Center(
-                  child: _buildUpdateReagentsRecipeDialogButton(element, index),
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildUpdateQuantityTextField(Function setState) {
-    return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Введите количество',
-      ),
-      keyboardType: TextInputType.number,
-      onChanged: (value) {
-        setState(() {
-          quantity = int.tryParse(value);
-        });
-      },
-    );
-  }
-
-  Widget _buildUpdateReagentsRecipeDialogButton(ReagentsRecipe element, int index) {
-    return ElevatedButton(
-      onPressed: () {
-        if (quantity != null) {
-          ReagentsRecipe newReagent = ReagentsRecipe(
-            reagentId: element.reagentId,
-            quantity: quantity!,
-          );
-          setState(() {
-            reagentsRecipe[index] = newReagent;
-          });
-          Navigator.of(context).pop();
-        } else {
-          _showErrorDialog();
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[300],
-      ),
-      child: const Text(
-        'Сохранить',
-        style: TextStyle(color: Colors.white, fontSize: 22),
-      ),
-    );
-  }
-
-  Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
-    RecipeModel recipe = const RecipeModel(isAccepted: false, isEnough: true);
-    int recipeId = await RecipeRepository().insertRecipe(recipe);
-
-    for (var element in reagentsRecipe) {
-      RecipeReagent recipeReagent = RecipeReagent(
-          recipeId: recipeId,
-          reagentId: element.reagentId,
-          quantity: element.quantity);
-      await RecipeReagentRepository().insertRecipeReagent(recipeReagent);
-    }
-    setState(() {
-      reagentsRecipe.clear();
-    });
   }
 }
