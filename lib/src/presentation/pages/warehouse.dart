@@ -317,8 +317,7 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<void> _addToWarehouse() async {
-    WarehouseModel? existingWarehouse =
-        await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
+    WarehouseModel? existingWarehouse = await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
 
     if (existingWarehouse != null) {
       WarehouseModel warehouse = WarehouseModel(
@@ -430,7 +429,7 @@ class _WarehouseState extends State<Warehouse> {
           builder: (context, setState) {
             return AlertDialog(
               title: const Center(
-                child: Text('Прибавить количество'),
+                child: Text('Прибавление количества'),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,

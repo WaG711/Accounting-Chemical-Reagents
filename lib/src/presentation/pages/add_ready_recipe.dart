@@ -16,9 +16,11 @@ class AddReadyRecipe extends StatefulWidget {
 }
 
 class _AddReadyRecipeState extends State<AddReadyRecipe> {
+  final TextEditingController _textEditingController = TextEditingController();
   List<ReagentsRecipe> reagentsReadyRecipe = [];
   Reagent? selectedReagent;
   int? quantity;
+  String name = '';
 
   @override
   Widget build(BuildContext context) {
@@ -44,25 +46,22 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     return Column(
       children: [
         Expanded(child: _buildResources()),
+        _buildRowNameReadyRecipe(),
         _buildInterfaceReagentsReadyRecipe()
       ],
     );
   }
 
-  Widget _buildInterfaceReagentsReadyRecipe() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 1, 10, 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildAddReadyRecipeButton(),
-          _buildAddToReagentsReadyRecipeButton()
-        ],
-      ),
-    );
-  }
-
   Widget _buildResources() {
+    if (reagentsReadyRecipe.isEmpty) {
+      return const Center(
+        child: Text(
+          'Добавьте реагент',
+          style: TextStyle(fontSize: 28),
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: reagentsReadyRecipe.length,
       itemBuilder: (context, index) {
@@ -198,6 +197,37 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     );
   }
 
+  Widget _buildRowNameReadyRecipe() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 1, 20, 15),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _textEditingController,
+            decoration: const InputDecoration(labelText: 'Название готового рецепта'),
+            onChanged: (value) {
+              name = value;
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInterfaceReagentsReadyRecipe() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 1, 10, 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildAddReadyRecipeButton(),
+          _buildAddToReagentsReadyRecipeButton()
+        ],
+      ),
+    );
+  }
+
   Widget _buildAddToReagentsReadyRecipeButton() {
     return IconButton(
       onPressed: _showAddToReagentsReadyRecipeDialog,
@@ -318,8 +348,8 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   Widget _buildAddReadyRecipeButton() {
     return ElevatedButton(
         onPressed: () {
-          if (reagentsReadyRecipe.isNotEmpty) {
-            _showAddReadyRecipeDialog();
+          if (reagentsReadyRecipe.isNotEmpty && name.isNotEmpty) {
+            _addReadyRecipeReagent();
           } else {
             _showErrorDialog();
           }
@@ -333,48 +363,8 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         ));
   }
 
-  void _showAddReadyRecipeDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          String name = '';
-          return AlertDialog(
-            title: const Center(child: Text('Название рецепта')),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Название'),
-                  onChanged: (value) {
-                    name = value;
-                  },
-                )
-              ],
-            ),
-            actions: [
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (name.isNotEmpty) {
-                      _addReadyRecipeReagent(name);
-                      Navigator.of(context).pop();
-                    } else {
-                      _showErrorDialog();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[300]),
-                  child: const Text('Добавить рецепт',
-                      style: TextStyle(color: Colors.white, fontSize: 22)),
-                ),
-              )
-            ],
-          );
-        });
-  }
-
-  Future<void> _addReadyRecipeReagent(String readyRecipeName) async {
-    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: readyRecipeName);
+  Future<void> _addReadyRecipeReagent() async {
+    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: name);
     int readyRecipeId = await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
 
     for (var element in reagentsReadyRecipe) {
@@ -386,6 +376,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     }
     setState(() {
       reagentsReadyRecipe.clear();
+      _textEditingController.clear();
     });
   }
 }

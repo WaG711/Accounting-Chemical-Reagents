@@ -50,6 +50,15 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Widget _buildResources() {
+    if (reagentsRecipe.isEmpty) {
+      return const Center(
+        child: Text(
+          'Добавьте реагент',
+          style: TextStyle(fontSize: 28),
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: reagentsRecipe.length,
       itemBuilder: (context, index) {
