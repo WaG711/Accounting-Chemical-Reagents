@@ -81,7 +81,7 @@ class _WarehouseState extends State<Warehouse> {
           padding: EdgeInsets.all(8.0),
           child: Text(
             'Ожидающие рецепты',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 22),
           ),
         ),
         Expanded(
@@ -149,8 +149,7 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<String> _getReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents =
-        await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {
@@ -200,7 +199,7 @@ class _WarehouseState extends State<Warehouse> {
         children: [
           const Text(
             'Ресурсы на складе',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 22),
           ),
           _buildAddToWarehouseButton(),
         ],
@@ -216,7 +215,9 @@ class _WarehouseState extends State<Warehouse> {
       ),
       child: const Text(
         'Добавить на склад',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16),
       ),
     );
   }

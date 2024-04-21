@@ -32,8 +32,8 @@ class RecipeRepository {
     final database = await _getDatabase();
     final List<Map<String, dynamic>> maps = await database.query(
       nameTable,
-      where: 'isAccepted = ? AND isEnough = ?',
-      whereArgs: [false, false],
+      where: 'isEnough = ?',
+      whereArgs: [false],
     );
     return List.generate(maps.length, (index) {
       return RecipeModel.fromMap(maps[index]);
