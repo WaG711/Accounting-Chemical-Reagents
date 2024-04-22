@@ -1,7 +1,10 @@
+import 'package:accounting_chemical_reagents/src/domain/model/ready_recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/reagents_recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe_reagent.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_reagent_repository.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_repository.dart';
@@ -18,6 +21,7 @@ class CollectRecipe extends StatefulWidget {
 class _CollectRecipStateState extends State<CollectRecipe> {
   List<ReagentsRecipe> reagentsRecipe = [];
   Reagent? selectedReagent;
+  ReadyRecipeModel? selectedReadyRecipe;
   int? quantity;
 
   @override
@@ -218,8 +222,96 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     showDialog(
         context: context,
         builder: (context) {
-          return const AlertDialog();
+          selectedReadyRecipe = null;
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: const Center(child: Text('Вывберите рецепт')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildReadyRecipeDropdown(setState),
+                ],
+              ),
+              actions: [_buildAddToReadyRecipeDialogButton()],
+            );
+          });
         });
+  }
+
+  Widget _buildReadyRecipeDropdown(Function setState) {
+    return FutureBuilder<List<ReadyRecipeModel>>(
+        future: ReadyRecipeRepository().getReadyRecipes(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Ошибка: ${snapshot.error}');
+          } else {
+            List<ReadyRecipeModel> readyRecipes = snapshot.data!;
+            return DropdownButtonFormField<int>(
+              value: selectedReadyRecipe?.id,
+              items: readyRecipes.map((readyRecipe) {
+                return DropdownMenuItem<int>(
+                  value: readyRecipe.id,
+                  child: Text(readyRecipe.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedReadyRecipe = readyRecipes.firstWhere((reagent) => reagent.id == value);
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Выберите рецепт',
+              ),
+            );
+          }
+        });
+  }
+
+  Widget _buildAddToReadyRecipeDialogButton() {
+    return ElevatedButton(
+      onPressed: () {
+        if (selectedReadyRecipe != null) {
+          _addReagentFromReadyRecipe(selectedReadyRecipe!.id!);
+          Navigator.of(context).pop();
+        } else {
+          _showErrorDialog();
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue[300],
+      ),
+      child: const Text(
+        'Добавить рецепт',
+        style: TextStyle(color: Colors.white, fontSize: 22),
+      ),
+    );
+  }
+
+  Future<void> _addReagentFromReadyRecipe(int readyRecipeId) async {
+    List<Map<String, dynamic>> reagents = await ReadyRecipeReagentRepository().getReagentsForReadyRecipe(readyRecipeId);
+
+    for (int i = 0; i < reagents.length; i++) {
+      int reagentId = reagents[i]['reagent_id'] as int;
+      int quantity = reagents[i]['quantity'] as int;
+
+      int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
+
+      if (existingIndex != -1) {
+        setState(() {
+          reagentsRecipe[existingIndex].quantity += quantity;
+        });
+      } else {
+        ReagentsRecipe newReagent = ReagentsRecipe(
+          reagentId: reagentId,
+          quantity: quantity,
+        );
+        setState(() {
+          reagentsRecipe.add(newReagent);
+        });
+      }
+    }
   }
 
   Widget _buildOrderRecipeButton() {

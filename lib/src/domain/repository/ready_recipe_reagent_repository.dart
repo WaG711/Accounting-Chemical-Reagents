@@ -24,8 +24,7 @@ class ReadyRecipeReagentRepository {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getReagentsForReadyRecipe(
-      int readyRecipeId) async {
+  Future<List<Map<String, dynamic>>> getReagentsForReadyRecipe(int readyRecipeId) async {
     final database = await _getDatabase();
     final List<Map<String, dynamic>> reagents = await database.query(
       nameTable,
