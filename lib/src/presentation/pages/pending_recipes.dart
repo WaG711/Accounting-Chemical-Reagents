@@ -1,8 +1,10 @@
 import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/warehouse.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_repository.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/warehouse_repository.dart';
 import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -32,10 +34,15 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     return RecipeRepository().getRecipesFalse();
   }
 
-  void _refreshRecipesData() {
+  void _refreshEnoughRecipesData() {
     setState(() {
       _fetchEnoughRecipesFuture = _fetchEnoughRecipesData();
-      _fetchEnoughRecipesFuture = _fetchNoEnoughRecipesData();
+    });
+  }
+
+  void _refreshNoEnoughRecipesData() {
+    setState(() {
+      _fetchNoEnoughRecipesFuture = _fetchNoEnoughRecipesData();
     });
   }
 
@@ -98,7 +105,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
                     return ExpansionTile(
-                      title: Text('№${recipe.id}',
+                      title: Text(
+                        '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
                       ),
                       children: [_showRecipeInfo(recipe)],
@@ -160,8 +168,10 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   Widget _buildDeleteRecipeButton(RecipeModel recipe) {
     return ElevatedButton(
       onPressed: () {
+        _returnQuantityWarehouse(recipe);
         RecipeRepository().deleteRecipe(recipe.id!);
-        _refreshRecipesData();
+        _refreshEnoughRecipesData();
+        _refreshNoEnoughRecipesData();
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue[300],
@@ -171,6 +181,24 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
+  }
+
+  Future<void> _returnQuantityWarehouse(RecipeModel recipe) async {
+    if (recipe.isEnough) {
+      List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
+
+      for (int i = 0; i < reagents.length; i++) {
+        int reagentId = reagents[i]['reagent_id'] as int;
+        int quantity = reagents[i]['quantity'] as int;
+
+        WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+        WarehouseModel newWarehouse = WarehouseModel(
+            id: warehouse!.id,
+            reagentId: warehouse.reagentId,
+            quantity: warehouse.quantity + quantity);
+        await WarehouseRepository().updateElement(newWarehouse);
+      }
+    }
   }
 
   Widget _buildNoEnoughRecipes() {
@@ -206,7 +234,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
                     return ExpansionTile(
-                      title: Text('№${recipe.id}',
+                      title: Text(
+                        '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
                       ),
                       children: [_showRecipeInfo(recipe)],

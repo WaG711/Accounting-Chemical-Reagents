@@ -3,11 +3,13 @@ import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/reagents_recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe.dart';
 import 'package:accounting_chemical_reagents/src/domain/model/recipe_reagent.dart';
+import 'package:accounting_chemical_reagents/src/domain/model/warehouse.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/recipe_repository.dart';
+import 'package:accounting_chemical_reagents/src/domain/repository/warehouse_repository.dart';
 import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +25,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   Reagent? selectedReagent;
   ReadyRecipeModel? selectedReadyRecipe;
   int? quantity;
+  bool isEnough = true;
+  bool isEnoughAll = true;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                   }
                 },
               ),
-              subtitle: Text('Количество: ${element.quantity}'),
+              subtitle: _buildQuantityInfo(element),
               trailing: IconButton(
                 onPressed: () {
                   _showUpdateReagentsRecipeDialog(element, index);
@@ -100,6 +104,41 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         );
       },
     );
+  }
+
+  Widget _buildQuantityInfo(ReagentsRecipe reagent) {
+    return FutureBuilder<WarehouseModel?>(
+      future: WarehouseRepository().getElementByReagentId(reagent.reagentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Ошибка: ${snapshot.error}');
+        } else {
+          WarehouseModel? warehouse = snapshot.data;
+          String quantityInfo ='Рецепт: ${reagent.quantity} Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
+
+          if (isEnough) {
+            return Text(quantityInfo);
+          } else {
+            return Text(quantityInfo, style: TextStyle(color: Colors.red[900]));
+          }
+        }
+      },
+    );
+  }
+
+  int _countingReagents(int? warehouseQuantity, int recipeQuantity) {
+    warehouseQuantity ??= 0;
+    int finalQuantity = warehouseQuantity - recipeQuantity;
+
+    if (finalQuantity < 0) {
+      isEnough = false;
+    } else {
+      isEnough = true;
+    }
+
+    return finalQuantity;
   }
 
   void _showUpdateReagentsRecipeDialog(ReagentsRecipe element, int index) {
@@ -296,11 +335,11 @@ class _CollectRecipStateState extends State<CollectRecipe> {
       int reagentId = reagents[i]['reagent_id'] as int;
       int quantity = reagents[i]['quantity'] as int;
 
-      _checkingaddingReagent(reagentId, quantity);
+      _checkingAddingReagent(reagentId, quantity);
     }
   }
 
-  void _checkingaddingReagent(int reagentId, int reagentQuantity) {
+  void _checkingAddingReagent(int reagentId, int reagentQuantity) {
     int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
 
     if (existingIndex != -1) {
@@ -337,7 +376,9 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
-    RecipeModel recipe = const RecipeModel(isAccepted: false, isEnough: true);
+    await _checkEnoughReagents(reagentsRecipe);
+
+    RecipeModel recipe = RecipeModel(isAccepted: false, isEnough: isEnoughAll);
     int recipeId = await RecipeRepository().insertRecipe(recipe);
 
     for (var element in reagentsRecipe) {
@@ -347,9 +388,42 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           quantity: element.quantity);
       await RecipeReagentRepository().insertRecipeReagent(recipeReagent);
     }
+
+    await _warehouseManagement(recipe, recipeId);
+
     setState(() {
       reagentsRecipe.clear();
     });
+  }
+
+  Future<void> _checkEnoughReagents(List<ReagentsRecipe> reagentsRecipe) async {
+    isEnoughAll = true;
+    for (int i = 0; i < reagentsRecipe.length; i++) {
+      WarehouseModel? warehouseModel = await WarehouseRepository().getElementByReagentId(reagentsRecipe[i].reagentId);
+      if (warehouseModel == null ||
+          warehouseModel.quantity < reagentsRecipe[i].quantity) {
+        isEnoughAll = false;
+        return;
+      }
+    }
+  }
+
+  Future<void> _warehouseManagement(RecipeModel recipe, int recipeId) async {
+    if (recipe.isEnough) {
+      List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+
+      for (int i = 0; i < reagents.length; i++) {
+        int reagentId = reagents[i]['reagent_id'] as int;
+        int quantity = reagents[i]['quantity'] as int;
+
+        WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+        WarehouseModel newWarehouse = WarehouseModel(
+            id: warehouse!.id,
+            reagentId: warehouse.reagentId,
+            quantity: warehouse.quantity - quantity);
+        await WarehouseRepository().updateElement(newWarehouse);
+      }
+    }
   }
 
   Widget _buildAddToReagentsRecipeButton() {
@@ -439,7 +513,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return ElevatedButton(
       onPressed: () {
         if (selectedReagent != null && quantity != null) {
-          _checkingaddingReagent(selectedReagent!.id!, quantity!);
+          _checkingAddingReagent(selectedReagent!.id!, quantity!);
           Navigator.of(context).pop();
         } else {
           _showErrorDialog();
