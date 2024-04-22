@@ -228,6 +228,41 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     );
   }
 
+  Widget _buildAddReadyRecipeButton() {
+    return ElevatedButton(
+        onPressed: () {
+          if (reagentsReadyRecipe.isNotEmpty && name.isNotEmpty) {
+            _addReadyRecipeReagent();
+          } else {
+            _showErrorDialog();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Сохранить рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ));
+  }
+
+  Future<void> _addReadyRecipeReagent() async {
+    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: name);
+    int readyRecipeId = await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
+
+    for (var element in reagentsReadyRecipe) {
+      ReadyRecipeReagent readyRecipeReagent = ReadyRecipeReagent(
+          readyRecipeId: readyRecipeId,
+          reagentId: element.reagentId,
+          quantity: element.quantity);
+      await ReadyRecipeReagentRepository().insertReadyRecipeReagent(readyRecipeReagent);
+    }
+    setState(() {
+      reagentsReadyRecipe.clear();
+      _textEditingController.clear();
+    });
+  }
+
   Widget _buildAddToReagentsReadyRecipeButton() {
     return IconButton(
       onPressed: _showAddToReagentsReadyRecipeDialog,
@@ -343,40 +378,5 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
     );
-  }
-
-  Widget _buildAddReadyRecipeButton() {
-    return ElevatedButton(
-        onPressed: () {
-          if (reagentsReadyRecipe.isNotEmpty && name.isNotEmpty) {
-            _addReadyRecipeReagent();
-          } else {
-            _showErrorDialog();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[300],
-        ),
-        child: const Text(
-          'Сохранить рецепт',
-          style: TextStyle(color: Colors.white, fontSize: 22),
-        ));
-  }
-
-  Future<void> _addReadyRecipeReagent() async {
-    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: name);
-    int readyRecipeId = await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
-
-    for (var element in reagentsReadyRecipe) {
-      ReadyRecipeReagent readyRecipeReagent = ReadyRecipeReagent(
-          readyRecipeId: readyRecipeId,
-          reagentId: element.reagentId,
-          quantity: element.quantity);
-      await ReadyRecipeReagentRepository().insertReadyRecipeReagent(readyRecipeReagent);
-    }
-    setState(() {
-      reagentsReadyRecipe.clear();
-      _textEditingController.clear();
-    });
   }
 }
