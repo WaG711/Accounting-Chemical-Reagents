@@ -358,7 +358,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
           backgroundColor: Colors.blue[300],
         ),
         child: const Text(
-          'Сохранить готовый рецепт',
+          'Сохранить рецепт',
           style: TextStyle(color: Colors.white, fontSize: 22),
         ));
   }
