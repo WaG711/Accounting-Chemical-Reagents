@@ -296,21 +296,25 @@ class _CollectRecipStateState extends State<CollectRecipe> {
       int reagentId = reagents[i]['reagent_id'] as int;
       int quantity = reagents[i]['quantity'] as int;
 
-      int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
+      _checkingaddingReagent(reagentId, quantity);
+    }
+  }
 
-      if (existingIndex != -1) {
-        setState(() {
-          reagentsRecipe[existingIndex].quantity += quantity;
-        });
-      } else {
-        ReagentsRecipe newReagent = ReagentsRecipe(
-          reagentId: reagentId,
-          quantity: quantity,
-        );
-        setState(() {
-          reagentsRecipe.add(newReagent);
-        });
-      }
+  void _checkingaddingReagent(int reagentId, int reagentQuantity) {
+    int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
+
+    if (existingIndex != -1) {
+      setState(() {
+        reagentsRecipe[existingIndex].quantity += reagentQuantity;
+      });
+    } else {
+      ReagentsRecipe newReagent = ReagentsRecipe(
+        reagentId: reagentId,
+        quantity: reagentQuantity,
+      );
+      setState(() {
+        reagentsRecipe.add(newReagent);
+      });
     }
   }
 
@@ -435,21 +439,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return ElevatedButton(
       onPressed: () {
         if (selectedReagent != null && quantity != null) {
-          int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == selectedReagent!.id);
-
-          if (existingIndex != -1) {
-            setState(() {
-              reagentsRecipe[existingIndex].quantity += quantity!;
-            });
-          } else {
-            ReagentsRecipe newReagent = ReagentsRecipe(
-              reagentId: selectedReagent!.id!,
-              quantity: quantity!,
-            );
-            setState(() {
-              reagentsRecipe.add(newReagent);
-            });
-          }
+          _checkingaddingReagent(selectedReagent!.id!, quantity!);
           Navigator.of(context).pop();
         } else {
           _showErrorDialog();
