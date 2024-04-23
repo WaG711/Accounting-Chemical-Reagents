@@ -35,12 +35,12 @@ class RecipeReagentRepository {
     return reagents;
   }
 
-  Future<void> deleteRecipeReagent(int id) async {
+  Future<void> deleteRecipeReagents(int recipeId) async {
     final database = await _getDatabase();
     await database.delete(
       nameTable,
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'recipe_id = ?',
+      whereArgs: [recipeId],
     );
   }
 }

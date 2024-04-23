@@ -199,6 +199,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
         await WarehouseRepository().updateElement(newWarehouse);
       }
     }
+
+    await RecipeReagentRepository().deleteRecipeReagents(recipe.id!);
   }
 
   Widget _buildNoEnoughRecipes() {

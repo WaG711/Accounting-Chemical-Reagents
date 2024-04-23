@@ -149,6 +149,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
     return ElevatedButton(
       onPressed: () {
         ReadyRecipeRepository().deleteReadyRecipe(recipe.id!);
+        ReadyRecipeReagentRepository().deleteReadyRecipeReagents(recipe.id!);
         _refreshReadyRecipesData();
       },
       style: ElevatedButton.styleFrom(

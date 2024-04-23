@@ -9,7 +9,7 @@ void main() async {
   await DatabaseHelper().initDatabase();
 
   runApp(MaterialApp(
-    title: 'Система учета химических реагентов',
+    title: 'СУХР',
     initialRoute: '/',
     routes: {
       '/': (context) => const Entrance(),
