@@ -303,7 +303,7 @@ class _WarehouseState extends State<Warehouse> {
           _addToWarehouse();
           Navigator.of(context).pop();
         } else {
-          _showErrorDialog();
+          MyWidgets.buildErorDialog(context);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -334,31 +334,6 @@ class _WarehouseState extends State<Warehouse> {
       WarehouseRepository().insertElement(warehouse);
     }
     _refreshWarehouseData();
-  }
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Ошибка'),
-          content: const Text('Все поля должны быть заполнены'),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            )
-          ],
-        );
-      },
-    );
   }
 
   Widget _buildResources() {
@@ -395,11 +370,11 @@ class _WarehouseState extends State<Warehouse> {
                           } else if (snapshot.hasError) {
                             return Text('Ошибка: ${snapshot.error}');
                           } else {
-                            return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
+                            return Text('${snapshot.data!.formula} • ${snapshot.data!.name}', style: const TextStyle(fontSize: 21));
                           }
                         },
                       ),
-                      subtitle: Text('Количество: ${element.quantity}'),
+                      subtitle: Text('Количество: ${element.quantity}', style: const TextStyle(fontSize: 17)),
                       trailing: IconButton(
                         onPressed: () {
                           _showUpdateWarehouseDialog(element);
@@ -477,7 +452,7 @@ class _WarehouseState extends State<Warehouse> {
           _refreshWarehouseData();
           Navigator.of(context).pop();
         } else {
-          _showErrorDialog();
+          MyWidgets.buildErorDialog(context);
         }
       },
       style: ElevatedButton.styleFrom(

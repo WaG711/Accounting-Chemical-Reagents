@@ -53,13 +53,15 @@ class MyWidgets {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextField(
-                          decoration: const InputDecoration(labelText: 'Название'),
+                          decoration:
+                              const InputDecoration(labelText: 'Название'),
                           onChanged: (value) {
                             name = value;
                           },
                         ),
                         TextField(
-                          decoration: const InputDecoration(labelText: 'Формула'),
+                          decoration:
+                              const InputDecoration(labelText: 'Формула'),
                           onChanged: (value) {
                             formula = value;
                           },
@@ -71,32 +73,11 @@ class MyWidgets {
                         child: ElevatedButton(
                             onPressed: () {
                               if (name.isNotEmpty && formula.isNotEmpty) {
-                                Reagent reagent = Reagent(name: name, formula: formula);
+                                Reagent reagent = Reagent(name: name.trim(), formula: formula.trim());
                                 ReagentRepository().insertReagent(reagent);
                                 Navigator.of(context).pop();
                               } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text("Ошибка"),
-                                      content: const Text("Все поля должны быть заполнены"),
-                                      actions: [
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("OK",
-                                            style: TextStyle(
-                                              color: Colors.black
-                                            ),),
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  },
-                                );
+                                buildErorDialog(context);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -115,6 +96,31 @@ class MyWidgets {
           ),
         ],
       ),
+    );
+  }
+
+  static void buildErorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Ошибка"),
+          content: const Text("Все поля должны быть заполнены"),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

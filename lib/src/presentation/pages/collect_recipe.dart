@@ -83,7 +83,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                   } else if (snapshot.hasError) {
                     return Text('Ошибка: ${snapshot.error}');
                   } else {
-                    return Text('${snapshot.data!.name} - ${snapshot.data!.formula}');
+                    return _buildReagentInfo(element.quantity, snapshot.data!);
                   }
                 },
               ),
@@ -106,9 +106,9 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     );
   }
 
-  Widget _buildQuantityInfo(ReagentsRecipe reagent) {
+  Widget _buildReagentInfo(int reagentQuantity, Reagent reagent) {
     return FutureBuilder<WarehouseModel?>(
-      future: WarehouseRepository().getElementByReagentId(reagent.reagentId),
+      future: WarehouseRepository().getElementByReagentId(reagent.id!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -116,12 +116,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           return Text('Ошибка: ${snapshot.error}');
         } else {
           WarehouseModel? warehouse = snapshot.data;
-          String quantityInfo ='Рецепт: ${reagent.quantity} Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
+          _countingReagents(warehouse?.quantity, reagentQuantity);
+          String reagentInfo = '${reagent.formula} • ${reagent.name}';
 
           if (isEnough) {
-            return Text(quantityInfo);
+            return Text(reagentInfo, style: const TextStyle(fontSize: 21));
           } else {
-            return Text(quantityInfo, style: TextStyle(color: Colors.red[900]));
+            return Text(reagentInfo, style: const TextStyle(color: Colors.red, fontSize: 21));
           }
         }
       },
@@ -139,6 +140,28 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     }
 
     return finalQuantity;
+  }
+
+  Widget _buildQuantityInfo(ReagentsRecipe reagent) {
+    return FutureBuilder<WarehouseModel?>(
+      future: WarehouseRepository().getElementByReagentId(reagent.reagentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Ошибка: ${snapshot.error}');
+        } else {
+          WarehouseModel? warehouse = snapshot.data;
+          String quantityInfo ='Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
+
+          if (isEnough) {
+            return Text(quantityInfo, style: const TextStyle(fontSize: 17));
+          } else {
+            return Text(quantityInfo, style: const TextStyle(color: Colors.red, fontSize: 17));
+          }
+        }
+      },
+    );
   }
 
   void _showUpdateReagentsRecipeDialog(ReagentsRecipe element, int index) {
@@ -198,7 +221,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           });
           Navigator.of(context).pop();
         } else {
-          _showErrorDialog();
+          MyWidgets.buildErorDialog(context);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -208,31 +231,6 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         'Сохранить',
         style: TextStyle(color: Colors.white, fontSize: 22),
       ),
-    );
-  }
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Ошибка'),
-          content: const Text('Все поля должны быть заполнены'),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            )
-          ],
-        );
-      },
     );
   }
 
@@ -315,7 +313,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           _addReagentFromReadyRecipe(selectedReadyRecipe!.id!);
           Navigator.of(context).pop();
         } else {
-          _showErrorDialog();
+          MyWidgets.buildErorDialog(context);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -363,7 +361,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           if (reagentsRecipe.isNotEmpty) {
             _addRecipeReagent(reagentsRecipe);
           } else {
-            _showErrorDialog();
+            MyWidgets.buildErorDialog(context);
           }
         },
         style: ElevatedButton.styleFrom(
@@ -516,7 +514,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           _checkingAddingReagent(selectedReagent!.id!, quantity!);
           Navigator.of(context).pop();
         } else {
-          _showErrorDialog();
+          MyWidgets.buildErorDialog(context);
         }
       },
       style: ElevatedButton.styleFrom(
