@@ -424,6 +424,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 ElevatedButton(
                   onPressed: () {
+                    isConfirmation = true;
                     Navigator.of(context).pop();
                   },
                   child: const Text(
