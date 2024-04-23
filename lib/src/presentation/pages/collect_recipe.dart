@@ -27,6 +27,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   int? quantity;
   bool isEnough = true;
   bool isEnoughAll = true;
+  bool isConfirmation = true;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           if (isEnough) {
             return Text(reagentInfo, style: const TextStyle(fontSize: 21));
           } else {
-            return Text(reagentInfo, style: const TextStyle(color: Colors.red, fontSize: 21));
+            return Text(reagentInfo,
+                style: const TextStyle(color: Colors.red, fontSize: 21));
           }
         }
       },
@@ -152,12 +154,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           return Text('Ошибка: ${snapshot.error}');
         } else {
           WarehouseModel? warehouse = snapshot.data;
-          String quantityInfo ='Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
+          String quantityInfo = 'Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
 
           if (isEnough) {
             return Text(quantityInfo, style: const TextStyle(fontSize: 17));
           } else {
-            return Text(quantityInfo, style: const TextStyle(color: Colors.red, fontSize: 17));
+            return Text(quantityInfo,
+                style: const TextStyle(color: Colors.red, fontSize: 17));
           }
         }
       },
@@ -376,6 +379,10 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
     await _checkEnoughReagents(reagentsRecipe);
 
+    if (!isConfirmation) {
+      return;
+    }
+
     RecipeModel recipe = RecipeModel(isAccepted: false, isEnough: isEnoughAll);
     int recipeId = await RecipeRepository().insertRecipe(recipe);
 
@@ -398,12 +405,46 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     isEnoughAll = true;
     for (int i = 0; i < reagentsRecipe.length; i++) {
       WarehouseModel? warehouseModel = await WarehouseRepository().getElementByReagentId(reagentsRecipe[i].reagentId);
-      if (warehouseModel == null ||
-          warehouseModel.quantity < reagentsRecipe[i].quantity) {
+      if (warehouseModel == null || warehouseModel.quantity < reagentsRecipe[i].quantity) {
         isEnoughAll = false;
+        await _showConfirmationDialog();
         return;
       }
     }
+  }
+
+  Future<void> _showConfirmationDialog() async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Предупреждение'),
+            content: const Text('Ввашем списке есть элемент с превышающим количеством'),
+            actions: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Продолжить',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    isConfirmation = false;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Отменить',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ])
+            ],
+          );
+        });
   }
 
   Future<void> _warehouseManagement(RecipeModel recipe, int recipeId) async {
