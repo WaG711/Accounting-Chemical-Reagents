@@ -419,7 +419,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Предупреждение'),
-            content: const Text('Ввашем списке есть элемент с превышающим количеством'),
+            content: const Text('В вашем списке есть элемент с превышающим количеством'),
             actions: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 ElevatedButton(
