@@ -6,40 +6,42 @@ class Entrance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.grey[100],
         body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/recipe');
-            },
-            style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                backgroundColor: Colors.blue[300]),
-            child: const Text(
-              'Собрать рецепт',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/recipe');
+                },
+                style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 25),
+                    backgroundColor: Colors.blue[300]),
+                child: const Text(
+                  'Собрать рецепт',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/warehouse');
-            },
-            child: const Text(
-              'Управление складом',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 22,
+              const SizedBox(height: 15),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/warehouse');
+                },
+                child: const Text(
+                  'Управление складом',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 }

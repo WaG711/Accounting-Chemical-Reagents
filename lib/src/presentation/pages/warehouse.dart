@@ -51,6 +51,7 @@ class _WarehouseState extends State<Warehouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
@@ -67,10 +68,10 @@ class _WarehouseState extends State<Warehouse> {
     return AppBar(
       title: const Text(
         'Склад',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.green[300],
-      iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.grey[100],
+      iconTheme: const IconThemeData(color: Colors.black),
     );
   }
 
@@ -78,7 +79,7 @@ class _WarehouseState extends State<Warehouse> {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(vertical: 5.0),
           child: Text(
             'Ожидающие рецепты',
             style: TextStyle(fontSize: 22),
@@ -107,8 +108,10 @@ class _WarehouseState extends State<Warehouse> {
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
                     return ExpansionTile(
-                      title: Text('№${recipe.id}',
-                      style: const TextStyle(fontSize: 22),),
+                      title: Text(
+                        '№${recipe.id}',
+                        style: const TextStyle(fontSize: 22),
+                      ),
                       children: [_showRecipeInfo(recipe)],
                     );
                   },
@@ -215,9 +218,7 @@ class _WarehouseState extends State<Warehouse> {
       ),
       child: const Text(
         'Добавить на склад',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16),
+        style: TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
   }
@@ -275,6 +276,13 @@ class _WarehouseState extends State<Warehouse> {
             },
             decoration: const InputDecoration(
               labelText: 'Выберите реагент',
+              labelStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
             ),
           );
         }
@@ -286,6 +294,13 @@ class _WarehouseState extends State<Warehouse> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Количество',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {
@@ -361,6 +376,7 @@ class _WarehouseState extends State<Warehouse> {
                 return Dismissible(
                   key: UniqueKey(),
                   child: Card(
+                    color: const Color.fromARGB(255, 240, 255, 240),
                     child: ListTile(
                       title: FutureBuilder<Reagent>(
                         future: ReagentRepository().getReagentById(element.reagentId),
@@ -370,11 +386,14 @@ class _WarehouseState extends State<Warehouse> {
                           } else if (snapshot.hasError) {
                             return Text('Ошибка: ${snapshot.error}');
                           } else {
-                            return Text('${snapshot.data!.formula} • ${snapshot.data!.name}', style: const TextStyle(fontSize: 21));
+                            return Text(
+                                '${snapshot.data!.formula} • ${snapshot.data!.name}',
+                                style: const TextStyle(fontSize: 21));
                           }
                         },
                       ),
-                      subtitle: Text('Количество: ${element.quantity}', style: const TextStyle(fontSize: 17)),
+                      subtitle: Text('Количество: ${element.quantity}',
+                          style: const TextStyle(fontSize: 17)),
                       trailing: IconButton(
                         onPressed: () {
                           _showUpdateWarehouseDialog(element);
@@ -429,6 +448,13 @@ class _WarehouseState extends State<Warehouse> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Прибавить на',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {

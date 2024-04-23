@@ -36,6 +36,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
@@ -52,10 +53,10 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
     return AppBar(
       title: const Text(
         'Готовые рецепты',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.blue[300],
-      iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.grey[100],
+      iconTheme: const IconThemeData(color: Colors.black),
     );
   }
 

@@ -49,6 +49,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
@@ -65,10 +66,10 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     return AppBar(
       title: const Text(
         'Ожидающие рецепты',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.blue[300],
-      iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.grey[100],
+      iconTheme: const IconThemeData(color: Colors.black),
     );
   }
 
@@ -76,7 +77,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(vertical: 5.0),
           child: Text(
             'Ожидающие оформления',
             style: TextStyle(fontSize: 22),
@@ -207,7 +208,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(vertical: 5.0),
           child: Text(
             'Ожидающие ресурсов',
             style: TextStyle(fontSize: 22),

@@ -32,6 +32,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: _buildReagentsRecipe(),
@@ -42,10 +43,10 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return AppBar(
       title: const Text(
         'Собрать рецепт',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.blue[300],
-      iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.grey[100],
+      iconTheme: const IconThemeData(color: Colors.black),
     );
   }
 
@@ -75,6 +76,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         return Dismissible(
           key: UniqueKey(),
           child: Card(
+            color: const Color.fromARGB(255, 239, 246, 255),
             child: ListTile(
               title: FutureBuilder<Reagent>(
                 future: ReagentRepository().getReagentById(element.reagentId),
@@ -200,6 +202,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Введите количество',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {
@@ -303,6 +312,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               },
               decoration: const InputDecoration(
                 labelText: 'Выберите рецепт',
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
               ),
             );
           }
@@ -529,6 +545,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               },
               decoration: const InputDecoration(
                 labelText: 'Выберите реагент',
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
               ),
             );
           }
@@ -539,6 +562,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Количество',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {

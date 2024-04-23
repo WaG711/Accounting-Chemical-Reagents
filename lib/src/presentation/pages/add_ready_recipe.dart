@@ -25,6 +25,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: _buildReagentsReadyRecipe(),
@@ -35,10 +36,10 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     return AppBar(
       title: const Text(
         'Добавить готовый рецепт',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.blue[300],
-      iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.grey[100],
+      iconTheme: const IconThemeData(color: Colors.black),
     );
   }
 
@@ -78,11 +79,14 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
                   } else if (snapshot.hasError) {
                     return Text('Ошибка: ${snapshot.error}');
                   } else {
-                    return Text('${snapshot.data!.formula} • ${snapshot.data!.name}', style: const TextStyle(fontSize: 21));
+                    return Text(
+                        '${snapshot.data!.formula} • ${snapshot.data!.name}',
+                        style: const TextStyle(fontSize: 21));
                   }
                 },
               ),
-              subtitle: Text('Количество: ${element.quantity}', style: const TextStyle(fontSize: 17)),
+              subtitle: Text('Количество: ${element.quantity}',
+                  style: const TextStyle(fontSize: 17)),
               trailing: IconButton(
                 onPressed: () {
                   _showUpdateReagentsReadyRecipeDialog(element, index);
@@ -134,6 +138,13 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Введите количество',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {
@@ -179,7 +190,16 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         children: [
           TextField(
             controller: _textEditingController,
-            decoration: const InputDecoration(labelText: 'Название готового рецепта'),
+            decoration: const InputDecoration(
+              labelText: 'Название готового рецепта',
+              labelStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
             onChanged: (value) {
               name = value;
             },
@@ -300,6 +320,13 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
               },
               decoration: const InputDecoration(
                 labelText: 'Выберите реагент',
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
               ),
             );
           }
@@ -310,6 +337,13 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     return TextField(
       decoration: const InputDecoration(
         labelText: 'Количество',
+        labelStyle: TextStyle(color: Colors.black),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {

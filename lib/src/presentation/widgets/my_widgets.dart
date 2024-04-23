@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 class MyWidgets {
   static Widget buildDrawer(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.grey[300],
       child: ListView(
         children: [
+          const DrawerHeader(
+              child: Icon(Icons.document_scanner_outlined, size: 100)),
           ListTile(
             leading: const Icon(Icons.receipt_rounded),
             title: const Text(
