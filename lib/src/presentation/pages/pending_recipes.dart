@@ -51,7 +51,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
@@ -70,7 +70,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
         'Ожидающие рецепты',
         style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
   }

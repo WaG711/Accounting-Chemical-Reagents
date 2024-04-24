@@ -25,7 +25,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: _buildReagentsReadyRecipe(),
@@ -38,7 +38,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         'Добавить готовый рецепт',
         style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
   }
@@ -70,6 +70,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         return Dismissible(
           key: UniqueKey(),
           child: Card(
+            color: const Color.fromARGB(255, 239, 246, 255),
             child: ListTile(
               title: FutureBuilder<Reagent>(
                 future: ReagentRepository().getReagentById(element.reagentId),
@@ -136,16 +137,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
 
   Widget _buildUpdateQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Введите количество',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Введите количество'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
@@ -190,16 +182,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         children: [
           TextField(
             controller: _textEditingController,
-            decoration: const InputDecoration(
-              labelText: 'Название готового рецепта',
-              labelStyle: TextStyle(color: Colors.black),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
+            decoration: MyWidgets.buildInputDecoration('Название готового рецепта'),
             onChanged: (value) {
               name = value;
             },
@@ -318,16 +301,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
                   selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
                 });
               },
-              decoration: const InputDecoration(
-                labelText: 'Выберите реагент',
-                labelStyle: TextStyle(color: Colors.black),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
+              decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
             );
           }
         });
@@ -335,16 +309,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
 
   Widget _buildQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Количество',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Количество'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {

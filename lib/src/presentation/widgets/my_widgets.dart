@@ -56,15 +56,13 @@ class MyWidgets {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextField(
-                          decoration:
-                              const InputDecoration(labelText: 'Название'),
+                          decoration: buildInputDecoration('Название'),
                           onChanged: (value) {
                             name = value;
                           },
                         ),
                         TextField(
-                          decoration:
-                              const InputDecoration(labelText: 'Формула'),
+                          decoration: buildInputDecoration('Формула'), 
                           onChanged: (value) {
                             formula = value;
                           },
@@ -124,6 +122,19 @@ class MyWidgets {
           ],
         );
       },
+    );
+  }
+
+  static InputDecoration buildInputDecoration(String text) {
+    return InputDecoration(
+      labelText: text,
+      labelStyle: const TextStyle(color: Colors.black),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
     );
   }
 }

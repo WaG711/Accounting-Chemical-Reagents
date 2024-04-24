@@ -51,7 +51,7 @@ class _WarehouseState extends State<Warehouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
@@ -70,7 +70,7 @@ class _WarehouseState extends State<Warehouse> {
         'Склад',
         style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
   }
@@ -274,16 +274,7 @@ class _WarehouseState extends State<Warehouse> {
                 selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
               });
             },
-            decoration: const InputDecoration(
-              labelText: 'Выберите реагент',
-              labelStyle: TextStyle(color: Colors.black),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
+            decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
           );
         }
       },
@@ -292,16 +283,7 @@ class _WarehouseState extends State<Warehouse> {
 
   Widget _buildQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Количество',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Количество'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
@@ -446,16 +428,7 @@ class _WarehouseState extends State<Warehouse> {
 
   Widget _buildUpdateQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Прибавить на',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Прибавить на'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {

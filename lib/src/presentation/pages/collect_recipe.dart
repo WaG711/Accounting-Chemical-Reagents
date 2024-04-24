@@ -32,7 +32,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
       endDrawer: MyWidgets.buildDrawer(context),
       body: _buildReagentsRecipe(),
@@ -45,7 +45,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         'Собрать рецепт',
         style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
   }
@@ -200,16 +200,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
 
   Widget _buildUpdateQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Введите количество',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Введите количество'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
@@ -310,16 +301,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                   selectedReadyRecipe = readyRecipes.firstWhere((reagent) => reagent.id == value);
                 });
               },
-              decoration: const InputDecoration(
-                labelText: 'Выберите рецепт',
-                labelStyle: TextStyle(color: Colors.black),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
+              decoration: MyWidgets.buildInputDecoration('Выберите рецепт'),
             );
           }
         });
@@ -543,16 +525,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                   selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
                 });
               },
-              decoration: const InputDecoration(
-                labelText: 'Выберите реагент',
-                labelStyle: TextStyle(color: Colors.black),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
+              decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
             );
           }
         });
@@ -560,16 +533,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
 
   Widget _buildQuantityTextField(Function setState) {
     return TextField(
-      decoration: const InputDecoration(
-        labelText: 'Количество',
-        labelStyle: TextStyle(color: Colors.black),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-      ),
+      decoration: MyWidgets.buildInputDecoration('Количество'),
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {

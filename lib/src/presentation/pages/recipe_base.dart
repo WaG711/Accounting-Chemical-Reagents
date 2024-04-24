@@ -35,7 +35,7 @@ class _RecipeBaseState extends State<RecipeBase> {
 
   BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       items: const [
         BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long_rounded), label: 'Готовые'),
