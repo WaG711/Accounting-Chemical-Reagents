@@ -34,7 +34,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   AppBar _buildAppBar() {
     return AppBar(
       title: const Text(
-        'Добавить готовый рецепт',
+        'Добавить рецепт',
         style: TextStyle(color: Colors.black),
       ),
       actions: [

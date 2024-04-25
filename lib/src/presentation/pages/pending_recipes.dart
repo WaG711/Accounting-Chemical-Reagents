@@ -66,7 +66,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   AppBar _buildAppBar() {
     return AppBar(
       title: const Text(
-        'Ожидающие рецепты',
+        'Ожидающие',
         style: TextStyle(color: Colors.black),
       ),
       actions: [

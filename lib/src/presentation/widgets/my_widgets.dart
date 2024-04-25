@@ -35,7 +35,7 @@ class MyWidgets {
                   color: Colors.blue[300],
                 ),
                 title: const Text(
-                  'Собрать рецепт',
+                  'Рецепт',
                   style: TextStyle(fontSize: 24),
                 ),
                 onTap: () {
@@ -47,7 +47,7 @@ class MyWidgets {
                 leading: Icon(Icons.warehouse_rounded,
                     size: 34, color: Colors.green[300]),
                 title: const Text(
-                  'Управление складом',
+                  'Склад',
                   style: TextStyle(fontSize: 24),
                 ),
                 onTap: () {

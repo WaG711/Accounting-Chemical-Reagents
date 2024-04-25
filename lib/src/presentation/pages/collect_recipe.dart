@@ -41,7 +41,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   AppBar _buildAppBar() {
     return AppBar(
       title: const Text(
-        'Собрать рецепт',
+        'Собрать',
         style: TextStyle(color: Colors.black),
       ),
       actions: [
