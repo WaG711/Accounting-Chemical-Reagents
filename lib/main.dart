@@ -10,6 +10,7 @@ void main() async {
 
   runApp(MaterialApp(
     title: 'СУХР',
+    debugShowCheckedModeBanner: false,
     initialRoute: '/',
     routes: {
       '/': (context) => const Entrance(),
