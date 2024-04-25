@@ -34,7 +34,6 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
-      endDrawer: MyWidgets.buildDrawer(context),
       body: _buildReagentsRecipe(),
     );
   }
@@ -45,6 +44,14 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         'Собрать рецепт',
         style: TextStyle(color: Colors.black),
       ),
+      actions: [
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              MyWidgets.openBottomDrawer(context);
+            },
+          ),
+        ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );

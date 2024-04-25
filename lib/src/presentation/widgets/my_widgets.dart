@@ -3,100 +3,130 @@ import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repos
 import 'package:flutter/material.dart';
 
 class MyWidgets {
-  static Widget buildDrawer(BuildContext context) {
-    return Drawer(
-      backgroundColor: Colors.grey[300],
-      child: ListView(
-        children: [
-          const DrawerHeader(
-              child: Icon(Icons.document_scanner_outlined, size: 100)),
-          ListTile(
-            leading: const Icon(Icons.receipt_rounded),
-            title: const Text(
-              'Собрать рецепт',
-              style: TextStyle(
-                fontSize: 20,
-              ),
+  static void openBottomDrawer(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
             ),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/recipe');
-            },
           ),
-          ListTile(
-            leading: const Icon(Icons.warehouse_rounded),
-            title: const Text(
-              'Управление складом',
-              style: TextStyle(
-                fontSize: 20,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
               ),
-            ),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/warehouse');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.warning_amber_rounded),
-            title: const Text(
-              'Создать реагент',
-              style: TextStyle(
-                fontSize: 20,
+              ListTile(
+                leading: Icon(
+                  Icons.receipt_rounded,
+                  size: 34,
+                  color: Colors.blue[300],
+                ),
+                title: const Text(
+                  'Собрать рецепт',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onTap: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/recipe', (route) => false);
+                },
               ),
-            ),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  String name = '';
-                  String formula = '';
-                  return AlertDialog(
-                    title: const Center(
-                      child: Text('Создайте реагент'),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          decoration: buildInputDecoration('Название'),
-                          onChanged: (value) {
-                            name = value;
-                          },
+              ListTile(
+                leading: Icon(Icons.warehouse_rounded,
+                    size: 34, color: Colors.green[300]),
+                title: const Text(
+                  'Управление складом',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onTap: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/warehouse', (route) => false);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.warning_amber_rounded,
+                    size: 34, color: Colors.red[300]),
+                title: const Text(
+                  'Создать реагент',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      String name = '';
+                      String formula = '';
+                      return AlertDialog(
+                        title: const Center(
+                          child: Text('Создайте реагент'),
                         ),
-                        TextField(
-                          decoration: buildInputDecoration('Формула'), 
-                          onChanged: (value) {
-                            formula = value;
-                          },
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              decoration: buildInputDecoration('Название'),
+                              onChanged: (value) {
+                                name = value;
+                              },
+                            ),
+                            TextField(
+                              decoration: buildInputDecoration('Формула'),
+                              onChanged: (value) {
+                                formula = value;
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    actions: [
-                      Center(
-                        child: ElevatedButton(
-                            onPressed: () {
-                              if (name.isNotEmpty && formula.isNotEmpty) {
-                                Reagent reagent = Reagent(name: name.trim(), formula: formula.trim());
-                                ReagentRepository().insertReagent(reagent);
-                                Navigator.of(context).pop();
-                              } else {
-                                buildErorDialog(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[300]),
-                            child: const Text(
-                              'Создать реагент',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 22),
-                            )),
-                      )
-                    ],
+                        actions: [
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (name.isNotEmpty && formula.isNotEmpty) {
+                                  Reagent reagent = Reagent(
+                                    name: name.trim(),
+                                    formula: formula.trim(),
+                                  );
+                                  ReagentRepository().insertReagent(reagent);
+                                  Navigator.of(context).pop();
+                                } else {
+                                  buildErorDialog(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red[300],
+                              ),
+                              child: const Text(
+                                'Создать реагент',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+              const SizedBox(height: 10)
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

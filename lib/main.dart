@@ -1,4 +1,5 @@
 import 'package:accounting_chemical_reagents/src/domain/database_helper.dart';
+import 'package:accounting_chemical_reagents/src/presentation/pages/add_ready_recipe.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/entrance.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/recipe_base.dart';
 import 'package:accounting_chemical_reagents/src/presentation/pages/warehouse.dart';
@@ -16,6 +17,7 @@ void main() async {
       '/': (context) => const Entrance(),
       '/recipe': (context) => const RecipeBase(),
       '/warehouse': (context) => const Warehouse(),
+      '/addReadyRecipe':(context) => const AddReadyRecipe()
     },
   ));
 }

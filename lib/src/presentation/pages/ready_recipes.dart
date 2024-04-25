@@ -3,7 +3,6 @@ import 'package:accounting_chemical_reagents/src/domain/model/reagent.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_reagent_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/ready_recipe_repository.dart';
 import 'package:accounting_chemical_reagents/src/domain/repository/reagent_repository.dart';
-import 'package:accounting_chemical_reagents/src/presentation/pages/add_ready_recipe.dart';
 import 'package:accounting_chemical_reagents/src/presentation/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +37,6 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       appBar: _buildAppBar(),
-      endDrawer: MyWidgets.buildDrawer(context),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -55,6 +53,14 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
         'Готовые рецепты',
         style: TextStyle(color: Colors.black),
       ),
+      actions: [
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              MyWidgets.openBottomDrawer(context);
+            },
+          ),
+        ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -171,12 +177,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
         children: [
           ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) => const AddReadyRecipe(),
-                  ),
-                );
+                Navigator.pushNamed(context, '/addReadyRecipe');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue[300],
