@@ -45,13 +45,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         style: TextStyle(color: Colors.black),
       ),
       actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              MyWidgets.openBottomDrawer(context);
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            MyWidgets.openBottomDrawer(context);
+          },
+        ),
+      ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -163,7 +163,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           return Text('Ошибка: ${snapshot.error}');
         } else {
           WarehouseModel? warehouse = snapshot.data;
-          String quantityInfo = 'Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
+          String quantityInfo =
+              'Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
 
           if (isEnough) {
             return Text(quantityInfo, style: const TextStyle(fontSize: 17));
@@ -309,27 +310,30 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите рецепт'),
+              isExpanded: true,
             );
           }
         });
   }
 
   Widget _buildAddToReadyRecipeDialogButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (selectedReadyRecipe != null) {
-          _addReagentFromReadyRecipe(selectedReadyRecipe!.id!);
-          Navigator.of(context).pop();
-        } else {
-          MyWidgets.buildErorDialog(context);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[300],
-      ),
-      child: const Text(
-        'Добавить рецепт',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          if (selectedReadyRecipe != null) {
+            _addReagentFromReadyRecipe(selectedReadyRecipe!.id!);
+            Navigator.of(context).pop();
+          } else {
+            MyWidgets.buildErorDialog(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Добавить рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ),
       ),
     );
   }
@@ -424,7 +428,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Предупреждение'),
-            content: const Text('В вашем списке есть элемент с превышающим количеством'),
+            content: const Text(
+                'В вашем списке есть элемент с превышающим количеством'),
             actions: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 ElevatedButton(
@@ -455,13 +460,15 @@ class _CollectRecipStateState extends State<CollectRecipe> {
 
   Future<void> _warehouseManagement(RecipeModel recipe, int recipeId) async {
     if (recipe.isEnough) {
-      List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+      List<Map<String, dynamic>> reagents =
+          await RecipeReagentRepository().getReagentsForRecipe(recipeId);
 
       for (int i = 0; i < reagents.length; i++) {
         int reagentId = reagents[i]['reagent_id'] as int;
         int quantity = reagents[i]['quantity'] as int;
 
-        WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+        WarehouseModel? warehouse =
+            await WarehouseRepository().getElementByReagentId(reagentId);
         WarehouseModel newWarehouse = WarehouseModel(
             id: warehouse!.id,
             reagentId: warehouse.reagentId,
@@ -533,6 +540,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
+              isExpanded: true,
             );
           }
         });
@@ -551,21 +559,23 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Widget _buildAddToReagentsRecipeDialogButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (selectedReagent != null && quantity != null) {
-          _checkingAddingReagent(selectedReagent!.id!, quantity!);
-          Navigator.of(context).pop();
-        } else {
-          MyWidgets.buildErorDialog(context);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[300],
-      ),
-      child: const Text(
-        'Добавить в рецепт',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          if (selectedReagent != null && quantity != null) {
+            _checkingAddingReagent(selectedReagent!.id!, quantity!);
+            Navigator.of(context).pop();
+          } else {
+            MyWidgets.buildErorDialog(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Добавить в рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ),
       ),
     );
   }

@@ -70,13 +70,13 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
         style: TextStyle(color: Colors.black),
       ),
       actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              MyWidgets.openBottomDrawer(context);
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            MyWidgets.openBottomDrawer(context);
+          },
+        ),
+      ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -119,6 +119,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                         '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
                       ),
+                      childrenPadding:
+                          const EdgeInsets.symmetric(horizontal: 15.0),
                       children: [_showRecipeInfo(recipe)],
                     );
                   },
@@ -159,7 +161,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   }
 
   Future<String> _getReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    List<Map<String, dynamic>> reagents =
+        await RecipeReagentRepository().getReagentsForRecipe(recipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {
@@ -167,7 +170,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
       int quantity = reagents[i]['quantity'] as int;
 
       Reagent reagent = await ReagentRepository().getReagentById(reagentId);
-      reagentsInfo += '${reagent.name} - $quantity';
+      reagentsInfo += '${reagent.name} • $quantity';
       if (i < reagents.length - 1) {
         reagentsInfo += '\n';
       }
@@ -195,13 +198,15 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
 
   Future<void> _returnQuantityWarehouse(RecipeModel recipe) async {
     if (recipe.isEnough) {
-      List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
+      List<Map<String, dynamic>> reagents =
+          await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
 
       for (int i = 0; i < reagents.length; i++) {
         int reagentId = reagents[i]['reagent_id'] as int;
         int quantity = reagents[i]['quantity'] as int;
 
-        WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+        WarehouseModel? warehouse =
+            await WarehouseRepository().getElementByReagentId(reagentId);
         WarehouseModel newWarehouse = WarehouseModel(
             id: warehouse!.id,
             reagentId: warehouse.reagentId,
@@ -250,6 +255,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                         '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
                       ),
+                      childrenPadding:
+                          const EdgeInsets.symmetric(horizontal: 15.0),
                       children: [_showNoEnoughRecipeInfo(recipe)],
                     );
                   },
@@ -297,7 +304,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   }
 
   Future<String> _getNoEnoughRecipeReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    List<Map<String, dynamic>> reagents =
+        await RecipeReagentRepository().getReagentsForRecipe(recipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {
@@ -305,7 +313,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
       int quantity = reagents[i]['quantity'] as int;
 
       Reagent reagent = await ReagentRepository().getReagentById(reagentId);
-      WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+      WarehouseModel? warehouse =
+          await WarehouseRepository().getElementByReagentId(reagentId);
 
       if (warehouse != null) {
         reagentsInfo += '${reagent.name} • $quantity/${warehouse.quantity}';
@@ -335,7 +344,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
   }
 
   Future<void> _orderRecipe(RecipeModel recipe) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
+    List<Map<String, dynamic>> reagents =
+        await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
 
     isOrder = true;
     await _checkEnoughReagents(reagents);
@@ -379,10 +389,10 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Предупреждение'),
-            content: const Text('В вашем списке есть элемент с превышающим количеством'),
+            content: const Text(
+                'В вашем списке есть элемент с превышающим количеством'),
             actions: [
-              Row(mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
                   onPressed: () {
                     isOrder = false;
@@ -401,13 +411,15 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
 
   Future<void> _warehouseManagement(RecipeModel recipe, int recipeId) async {
     if (recipe.isEnough) {
-      List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+      List<Map<String, dynamic>> reagents =
+          await RecipeReagentRepository().getReagentsForRecipe(recipeId);
 
       for (int i = 0; i < reagents.length; i++) {
         int reagentId = reagents[i]['reagent_id'] as int;
         int quantity = reagents[i]['quantity'] as int;
 
-        WarehouseModel? warehouse = await WarehouseRepository().getElementByReagentId(reagentId);
+        WarehouseModel? warehouse =
+            await WarehouseRepository().getElementByReagentId(reagentId);
         WarehouseModel newWarehouse = WarehouseModel(
             id: warehouse!.id,
             reagentId: warehouse.reagentId,

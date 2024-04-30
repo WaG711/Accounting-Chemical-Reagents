@@ -70,13 +70,13 @@ class _WarehouseState extends State<Warehouse> {
         style: TextStyle(color: Colors.black),
       ),
       actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              MyWidgets.openBottomDrawer(context);
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            MyWidgets.openBottomDrawer(context);
+          },
+        ),
+      ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -119,6 +119,8 @@ class _WarehouseState extends State<Warehouse> {
                         '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
                       ),
+                      childrenPadding:
+                          const EdgeInsets.symmetric(horizontal: 15.0),
                       children: [_showRecipeInfo(recipe)],
                     );
                   },
@@ -159,7 +161,8 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<String> _getReagentsInfo(int recipeId) async {
-    List<Map<String, dynamic>> reagents = await RecipeReagentRepository().getReagentsForRecipe(recipeId);
+    List<Map<String, dynamic>> reagents =
+        await RecipeReagentRepository().getReagentsForRecipe(recipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {
@@ -167,7 +170,7 @@ class _WarehouseState extends State<Warehouse> {
       int quantity = reagents[i]['quantity'] as int;
 
       Reagent reagent = await ReagentRepository().getReagentById(reagentId);
-      reagentsInfo += '${reagent.name} - $quantity';
+      reagentsInfo += '${reagent.name} • $quantity';
       if (i < reagents.length - 1) {
         reagentsInfo += '\n';
       }
@@ -176,7 +179,8 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Widget _buildUpdateRecipeButton(RecipeModel recipe) {
-    RecipeModel processedRecipe = RecipeModel(id: recipe.id, isAccepted: true, isEnough: true);
+    RecipeModel processedRecipe =
+        RecipeModel(id: recipe.id, isAccepted: true, isEnough: true);
     return ElevatedButton(
       onPressed: () {
         RecipeRepository().updateRecipe(processedRecipe);
@@ -208,7 +212,7 @@ class _WarehouseState extends State<Warehouse> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Ресурсы на складе',
+            'На складе',
             style: TextStyle(fontSize: 22),
           ),
           _buildAddToWarehouseButton(),
@@ -282,6 +286,7 @@ class _WarehouseState extends State<Warehouse> {
               });
             },
             decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
+            isExpanded: true,
           );
         }
       },
@@ -301,27 +306,30 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Widget _buildAddToWarehouseDialogButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (selectedReagent != null && quantity != null) {
-          _addToWarehouse();
-          Navigator.of(context).pop();
-        } else {
-          MyWidgets.buildErorDialog(context);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green[300],
-      ),
-      child: const Text(
-        'Добавить на склад',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          if (selectedReagent != null && quantity != null) {
+            _addToWarehouse();
+            Navigator.of(context).pop();
+          } else {
+            MyWidgets.buildErorDialog(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green[300],
+        ),
+        child: const Text(
+          'Добавить на склад',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ),
       ),
     );
   }
 
   Future<void> _addToWarehouse() async {
-    WarehouseModel? existingWarehouse = await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
+    WarehouseModel? existingWarehouse =
+        await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
 
     if (existingWarehouse != null) {
       WarehouseModel warehouse = WarehouseModel(

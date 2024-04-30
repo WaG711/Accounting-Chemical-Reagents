@@ -38,13 +38,13 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         style: TextStyle(color: Colors.black),
       ),
       actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              MyWidgets.openBottomDrawer(context);
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            MyWidgets.openBottomDrawer(context);
+          },
+        ),
+      ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -189,7 +189,8 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
         children: [
           TextField(
             controller: _textEditingController,
-            decoration: MyWidgets.buildInputDecoration('Название готового рецепта'),
+            decoration:
+                MyWidgets.buildInputDecoration('Название готового рецепта'),
             onChanged: (value) {
               name = value;
             },
@@ -232,7 +233,8 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
 
   Future<void> _addReadyRecipeReagent() async {
     ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: name.trim());
-    int readyRecipeId = await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
+    int readyRecipeId =
+        await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
 
     for (var element in reagentsReadyRecipe) {
       ReadyRecipeReagent readyRecipeReagent = ReadyRecipeReagent(
@@ -309,6 +311,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
+              isExpanded: true,
             );
           }
         });
@@ -327,35 +330,38 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   }
 
   Widget _buildAddToReagentsReadyRecipeDialogButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (selectedReagent != null && quantity != null) {
-          int existingIndex = reagentsReadyRecipe.indexWhere((element) => element.reagentId == selectedReagent!.id);
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          if (selectedReagent != null && quantity != null) {
+            int existingIndex = reagentsReadyRecipe.indexWhere(
+                (element) => element.reagentId == selectedReagent!.id);
 
-          if (existingIndex != -1) {
-            setState(() {
-              reagentsReadyRecipe[existingIndex].quantity += quantity!;
-            });
+            if (existingIndex != -1) {
+              setState(() {
+                reagentsReadyRecipe[existingIndex].quantity += quantity!;
+              });
+            } else {
+              ReagentsRecipe newReagent = ReagentsRecipe(
+                reagentId: selectedReagent!.id!,
+                quantity: quantity!,
+              );
+              setState(() {
+                reagentsReadyRecipe.add(newReagent);
+              });
+            }
+            Navigator.of(context).pop();
           } else {
-            ReagentsRecipe newReagent = ReagentsRecipe(
-              reagentId: selectedReagent!.id!,
-              quantity: quantity!,
-            );
-            setState(() {
-              reagentsReadyRecipe.add(newReagent);
-            });
+            MyWidgets.buildErorDialog(context);
           }
-          Navigator.of(context).pop();
-        } else {
-          MyWidgets.buildErorDialog(context);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[300],
-      ),
-      child: const Text(
-        'Добавить в рецепт',
-        style: TextStyle(color: Colors.white, fontSize: 22),
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[300],
+        ),
+        child: const Text(
+          'Добавить в рецепт',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ),
       ),
     );
   }

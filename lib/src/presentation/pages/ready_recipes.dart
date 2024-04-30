@@ -54,13 +54,13 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
         style: TextStyle(color: Colors.black),
       ),
       actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              MyWidgets.openBottomDrawer(context);
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            MyWidgets.openBottomDrawer(context);
+          },
+        ),
+      ],
       backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
       iconTheme: const IconThemeData(color: Colors.black),
     );
@@ -96,6 +96,8 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
                         readyRecipe.name,
                         style: const TextStyle(fontSize: 22),
                       ),
+                      childrenPadding:
+                          const EdgeInsets.symmetric(horizontal: 15.0),
                       children: [_showRecipeInfo(readyRecipe)],
                     );
                   },
@@ -144,7 +146,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
       int quantity = reagents[i]['quantity'] as int;
 
       Reagent reagent = await ReagentRepository().getReagentById(reagentId);
-      reagentsInfo += '${reagent.name} - $quantity';
+      reagentsInfo += '${reagent.name} • $quantity';
       if (i < reagents.length - 1) {
         reagentsInfo += '\n';
       }
