@@ -10,6 +10,7 @@ void main() async {
   await DatabaseHelper().initDatabase();
 
   runApp(MaterialApp(
+    theme: ThemeData(fontFamily: 'SpaceGrotesk'),
     title: 'СУХР',
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
