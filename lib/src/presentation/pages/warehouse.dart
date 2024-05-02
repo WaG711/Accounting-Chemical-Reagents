@@ -18,8 +18,8 @@ class Warehouse extends StatefulWidget {
 class _WarehouseState extends State<Warehouse> {
   late Future<List<WarehouseModel>> _fetchWarehouseFuture;
   late Future<List<RecipeModel>> _fetchRecipesFuture;
-  Reagent? selectedReagent;
-  int? quantity;
+  Reagent? _selectedReagent;
+  int? _quantity;
 
   @override
   void initState() {
@@ -238,7 +238,7 @@ class _WarehouseState extends State<Warehouse> {
     showDialog(
       context: context,
       builder: (context) {
-        selectedReagent = null;
+        _selectedReagent = null;
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -273,7 +273,7 @@ class _WarehouseState extends State<Warehouse> {
         } else {
           List<Reagent> reagents = snapshot.data!;
           return DropdownButtonFormField<int>(
-            value: selectedReagent?.id,
+            value: _selectedReagent?.id,
             items: reagents.map((reagent) {
               return DropdownMenuItem<int>(
                 value: reagent.id,
@@ -282,7 +282,7 @@ class _WarehouseState extends State<Warehouse> {
             }).toList(),
             onChanged: (value) {
               setState(() {
-                selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
+                _selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
               });
             },
             decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
@@ -299,7 +299,7 @@ class _WarehouseState extends State<Warehouse> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -309,7 +309,7 @@ class _WarehouseState extends State<Warehouse> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          if (selectedReagent != null && quantity != null) {
+          if (_selectedReagent != null && _quantity != null) {
             _addToWarehouse();
             Navigator.of(context).pop();
           } else {
@@ -328,20 +328,20 @@ class _WarehouseState extends State<Warehouse> {
   }
 
   Future<void> _addToWarehouse() async {
-    WarehouseModel? existingWarehouse =
-        await WarehouseRepository().getElementByReagentId(selectedReagent!.id!);
+    WarehouseModel? existingWarehouse = await WarehouseRepository()
+        .getElementByReagentId(_selectedReagent!.id!);
 
     if (existingWarehouse != null) {
       WarehouseModel warehouse = WarehouseModel(
         id: existingWarehouse.id,
         reagentId: existingWarehouse.reagentId,
-        quantity: existingWarehouse.quantity + quantity!,
+        quantity: existingWarehouse.quantity + _quantity!,
       );
       WarehouseRepository().updateElement(warehouse);
     } else {
       WarehouseModel warehouse = WarehouseModel(
-        reagentId: selectedReagent!.id!,
-        quantity: quantity!,
+        reagentId: _selectedReagent!.id!,
+        quantity: _quantity!,
       );
       WarehouseRepository().insertElement(warehouse);
     }
@@ -376,7 +376,8 @@ class _WarehouseState extends State<Warehouse> {
                     color: const Color.fromARGB(255, 240, 255, 240),
                     child: ListTile(
                       title: FutureBuilder<Reagent>(
-                        future: ReagentRepository().getReagentById(element.reagentId),
+                        future: ReagentRepository()
+                            .getReagentById(element.reagentId),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const CircularProgressIndicator();
@@ -447,7 +448,7 @@ class _WarehouseState extends State<Warehouse> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -456,11 +457,11 @@ class _WarehouseState extends State<Warehouse> {
   Widget _buildUpdateWarehouseDialogButton(WarehouseModel element) {
     return ElevatedButton(
       onPressed: () {
-        if (quantity != null) {
+        if (_quantity != null) {
           WarehouseModel warehouse = WarehouseModel(
             id: element.id,
             reagentId: element.reagentId,
-            quantity: element.quantity + quantity!,
+            quantity: element.quantity + _quantity!,
           );
           WarehouseRepository().updateElement(warehouse);
           _refreshWarehouseData();

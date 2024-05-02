@@ -17,10 +17,10 @@ class AddReadyRecipe extends StatefulWidget {
 
 class _AddReadyRecipeState extends State<AddReadyRecipe> {
   final TextEditingController _textEditingController = TextEditingController();
-  List<ReagentsRecipe> reagentsReadyRecipe = [];
-  Reagent? selectedReagent;
-  int? quantity;
-  String name = '';
+  final List<ReagentsRecipe> _reagentsReadyRecipe = [];
+  Reagent? _selectedReagent;
+  int? _quantity;
+  String _name = '';
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   }
 
   Widget _buildResources() {
-    if (reagentsReadyRecipe.isEmpty) {
+    if (_reagentsReadyRecipe.isEmpty) {
       return const Center(
         child: Text(
           'Добавьте реагент',
@@ -71,9 +71,9 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     }
 
     return ListView.builder(
-      itemCount: reagentsReadyRecipe.length,
+      itemCount: _reagentsReadyRecipe.length,
       itemBuilder: (context, index) {
-        ReagentsRecipe element = reagentsReadyRecipe[index];
+        ReagentsRecipe element = _reagentsReadyRecipe[index];
         return Dismissible(
           key: UniqueKey(),
           child: Card(
@@ -105,7 +105,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
           ),
           onDismissed: (direction) {
             setState(() {
-              reagentsReadyRecipe.removeAt(index);
+              _reagentsReadyRecipe.removeAt(index);
             });
           },
         );
@@ -148,7 +148,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -158,13 +158,13 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
       ReagentsRecipe element, int index) {
     return ElevatedButton(
       onPressed: () {
-        if (quantity != null) {
+        if (_quantity != null) {
           ReagentsRecipe newReagent = ReagentsRecipe(
             reagentId: element.reagentId,
-            quantity: quantity!,
+            quantity: _quantity!,
           );
           setState(() {
-            reagentsReadyRecipe[index] = newReagent;
+            _reagentsReadyRecipe[index] = newReagent;
           });
           Navigator.of(context).pop();
         } else {
@@ -192,7 +192,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
             decoration:
                 MyWidgets.buildInputDecoration('Название готового рецепта'),
             onChanged: (value) {
-              name = value;
+              _name = value;
             },
           )
         ],
@@ -216,7 +216,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   Widget _buildAddReadyRecipeButton() {
     return ElevatedButton(
         onPressed: () {
-          if (reagentsReadyRecipe.isNotEmpty && name.isNotEmpty) {
+          if (_reagentsReadyRecipe.isNotEmpty && _name.isNotEmpty) {
             _addReadyRecipeReagent();
           } else {
             MyWidgets.buildErorDialog(context);
@@ -232,19 +232,20 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
   }
 
   Future<void> _addReadyRecipeReagent() async {
-    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: name.trim());
+    ReadyRecipeModel readyRecipe = ReadyRecipeModel(name: _name.trim());
     int readyRecipeId =
         await ReadyRecipeRepository().insertReadyRecipe(readyRecipe);
 
-    for (var element in reagentsReadyRecipe) {
+    for (var element in _reagentsReadyRecipe) {
       ReadyRecipeReagent readyRecipeReagent = ReadyRecipeReagent(
           readyRecipeId: readyRecipeId,
           reagentId: element.reagentId,
           quantity: element.quantity);
-      await ReadyRecipeReagentRepository().insertReadyRecipeReagent(readyRecipeReagent);
+      await ReadyRecipeReagentRepository()
+          .insertReadyRecipeReagent(readyRecipeReagent);
     }
     setState(() {
-      reagentsReadyRecipe.clear();
+      _reagentsReadyRecipe.clear();
       _textEditingController.clear();
     });
   }
@@ -263,7 +264,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     showDialog(
       context: context,
       builder: (context) {
-        selectedReagent = null;
+        _selectedReagent = null;
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -298,7 +299,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
           } else {
             List<Reagent> reagents = snapshot.data!;
             return DropdownButtonFormField<int>(
-              value: selectedReagent?.id,
+              value: _selectedReagent?.id,
               items: reagents.map((reagent) {
                 return DropdownMenuItem<int>(
                   value: reagent.id,
@@ -307,7 +308,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
+                  _selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
@@ -323,7 +324,7 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -333,21 +334,21 @@ class _AddReadyRecipeState extends State<AddReadyRecipe> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          if (selectedReagent != null && quantity != null) {
-            int existingIndex = reagentsReadyRecipe.indexWhere(
-                (element) => element.reagentId == selectedReagent!.id);
+          if (_selectedReagent != null && _quantity != null) {
+            int existingIndex = _reagentsReadyRecipe.indexWhere(
+                (element) => element.reagentId == _selectedReagent!.id);
 
             if (existingIndex != -1) {
               setState(() {
-                reagentsReadyRecipe[existingIndex].quantity += quantity!;
+                _reagentsReadyRecipe[existingIndex].quantity += _quantity!;
               });
             } else {
               ReagentsRecipe newReagent = ReagentsRecipe(
-                reagentId: selectedReagent!.id!,
-                quantity: quantity!,
+                reagentId: _selectedReagent!.id!,
+                quantity: _quantity!,
               );
               setState(() {
-                reagentsReadyRecipe.add(newReagent);
+                _reagentsReadyRecipe.add(newReagent);
               });
             }
             Navigator.of(context).pop();

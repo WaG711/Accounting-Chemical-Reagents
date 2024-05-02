@@ -19,7 +19,7 @@ class PendingRecipes extends StatefulWidget {
 class _PendingRecipesStateState extends State<PendingRecipes> {
   late Future<List<RecipeModel>> _fetchEnoughRecipesFuture;
   late Future<List<RecipeModel>> _fetchNoEnoughRecipesFuture;
-  bool isOrder = true;
+  bool _isOrder = true;
 
   @override
   void initState() {
@@ -347,10 +347,10 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     List<Map<String, dynamic>> reagents =
         await RecipeReagentRepository().getReagentsForRecipe(recipe.id!);
 
-    isOrder = true;
+    _isOrder = true;
     await _checkEnoughReagents(reagents);
 
-    if (!isOrder) {
+    if (!_isOrder) {
       return;
     }
 
@@ -375,7 +375,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
     }
 
     for (int i = 0; i < reagentsRecipe.length; i++) {
-      WarehouseModel? warehouseModel = await WarehouseRepository().getElementByReagentId(reagentsRecipe[i].reagentId);
+      WarehouseModel? warehouseModel = await WarehouseRepository()
+          .getElementByReagentId(reagentsRecipe[i].reagentId);
       if (warehouseModel == null || warehouseModel.quantity < reagentsRecipe[i].quantity) {
         await _showConfirmationDialog();
         return;
@@ -395,7 +396,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
                   onPressed: () {
-                    isOrder = false;
+                    _isOrder = false;
                     Navigator.of(context).pop();
                   },
                   child: const Text(

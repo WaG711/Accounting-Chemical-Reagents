@@ -17,7 +17,7 @@ void main() async {
       '/': (context) => const Entrance(),
       '/recipe': (context) => const RecipeBase(),
       '/warehouse': (context) => const Warehouse(),
-      '/addReadyRecipe':(context) => const AddReadyRecipe()
+      '/addReadyRecipe': (context) => const AddReadyRecipe()
     },
   ));
 }

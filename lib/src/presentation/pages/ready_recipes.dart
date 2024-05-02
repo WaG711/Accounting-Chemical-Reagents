@@ -138,7 +138,8 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
   }
 
   Future<String> _getReagentsInfo(int readyRecipeId) async {
-    List<Map<String, dynamic>> reagents = await ReadyRecipeReagentRepository().getReagentsForReadyRecipe(readyRecipeId);
+    List<Map<String, dynamic>> reagents = await ReadyRecipeReagentRepository()
+        .getReagentsForReadyRecipe(readyRecipeId);
     String reagentsInfo = '';
 
     for (int i = 0; i < reagents.length; i++) {

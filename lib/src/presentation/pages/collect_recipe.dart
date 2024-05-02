@@ -21,13 +21,13 @@ class CollectRecipe extends StatefulWidget {
 }
 
 class _CollectRecipStateState extends State<CollectRecipe> {
-  List<ReagentsRecipe> reagentsRecipe = [];
-  Reagent? selectedReagent;
-  ReadyRecipeModel? selectedReadyRecipe;
-  int? quantity;
-  bool isEnough = true;
-  bool isEnoughAll = true;
-  bool isConfirmation = true;
+  final List<ReagentsRecipe> _reagentsRecipe = [];
+  Reagent? _selectedReagent;
+  ReadyRecipeModel? _selectedReadyRecipe;
+  int? _quantity;
+  bool _isEnough = true;
+  bool _isEnoughAll = true;
+  bool _isConfirmation = true;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Widget _buildResources() {
-    if (reagentsRecipe.isEmpty) {
+    if (_reagentsRecipe.isEmpty) {
       return const Center(
         child: Text(
           'Добавьте реагент',
@@ -77,9 +77,9 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     }
 
     return ListView.builder(
-      itemCount: reagentsRecipe.length,
+      itemCount: _reagentsRecipe.length,
       itemBuilder: (context, index) {
-        ReagentsRecipe element = reagentsRecipe[index];
+        ReagentsRecipe element = _reagentsRecipe[index];
         return Dismissible(
           key: UniqueKey(),
           child: Card(
@@ -108,7 +108,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           ),
           onDismissed: (direction) {
             setState(() {
-              reagentsRecipe.removeAt(index);
+              _reagentsRecipe.removeAt(index);
             });
           },
         );
@@ -129,7 +129,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           _countingReagents(warehouse?.quantity, reagentQuantity);
           String reagentInfo = '${reagent.formula} • ${reagent.name}';
 
-          if (isEnough) {
+          if (_isEnough) {
             return Text(reagentInfo, style: const TextStyle(fontSize: 21));
           } else {
             return Text(reagentInfo,
@@ -145,9 +145,9 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     int finalQuantity = warehouseQuantity - recipeQuantity;
 
     if (finalQuantity < 0) {
-      isEnough = false;
+      _isEnough = false;
     } else {
-      isEnough = true;
+      _isEnough = true;
     }
 
     return finalQuantity;
@@ -166,7 +166,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           String quantityInfo =
               'Рецепт: ${reagent.quantity} • Осталось: ${_countingReagents(warehouse?.quantity, reagent.quantity)}';
 
-          if (isEnough) {
+          if (_isEnough) {
             return Text(quantityInfo, style: const TextStyle(fontSize: 17));
           } else {
             return Text(quantityInfo,
@@ -212,7 +212,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -222,13 +222,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
       ReagentsRecipe element, int index) {
     return ElevatedButton(
       onPressed: () {
-        if (quantity != null) {
+        if (_quantity != null) {
           ReagentsRecipe newReagent = ReagentsRecipe(
             reagentId: element.reagentId,
-            quantity: quantity!,
+            quantity: _quantity!,
           );
           setState(() {
-            reagentsRecipe[index] = newReagent;
+            _reagentsRecipe[index] = newReagent;
           });
           Navigator.of(context).pop();
         } else {
@@ -270,7 +270,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     showDialog(
         context: context,
         builder: (context) {
-          selectedReadyRecipe = null;
+          _selectedReadyRecipe = null;
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               title: const Center(child: Text('Вывберите рецепт')),
@@ -297,7 +297,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           } else {
             List<ReadyRecipeModel> readyRecipes = snapshot.data!;
             return DropdownButtonFormField<int>(
-              value: selectedReadyRecipe?.id,
+              value: _selectedReadyRecipe?.id,
               items: readyRecipes.map((readyRecipe) {
                 return DropdownMenuItem<int>(
                   value: readyRecipe.id,
@@ -306,7 +306,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedReadyRecipe = readyRecipes.firstWhere((reagent) => reagent.id == value);
+                  _selectedReadyRecipe =
+                      readyRecipes.firstWhere((reagent) => reagent.id == value);
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите рецепт'),
@@ -320,8 +321,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          if (selectedReadyRecipe != null) {
-            _addReagentFromReadyRecipe(selectedReadyRecipe!.id!);
+          if (_selectedReadyRecipe != null) {
+            _addReagentFromReadyRecipe(_selectedReadyRecipe!.id!);
             Navigator.of(context).pop();
           } else {
             MyWidgets.buildErorDialog(context);
@@ -339,7 +340,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Future<void> _addReagentFromReadyRecipe(int readyRecipeId) async {
-    List<Map<String, dynamic>> reagents = await ReadyRecipeReagentRepository().getReagentsForReadyRecipe(readyRecipeId);
+    List<Map<String, dynamic>> reagents = await ReadyRecipeReagentRepository()
+        .getReagentsForReadyRecipe(readyRecipeId);
 
     for (int i = 0; i < reagents.length; i++) {
       int reagentId = reagents[i]['reagent_id'] as int;
@@ -350,11 +352,11 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   void _checkingAddingReagent(int reagentId, int reagentQuantity) {
-    int existingIndex = reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
+    int existingIndex = _reagentsRecipe.indexWhere((element) => element.reagentId == reagentId);
 
     if (existingIndex != -1) {
       setState(() {
-        reagentsRecipe[existingIndex].quantity += reagentQuantity;
+        _reagentsRecipe[existingIndex].quantity += reagentQuantity;
       });
     } else {
       ReagentsRecipe newReagent = ReagentsRecipe(
@@ -362,7 +364,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
         quantity: reagentQuantity,
       );
       setState(() {
-        reagentsRecipe.add(newReagent);
+        _reagentsRecipe.add(newReagent);
       });
     }
   }
@@ -370,8 +372,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   Widget _buildOrderRecipeButton() {
     return ElevatedButton(
         onPressed: () {
-          if (reagentsRecipe.isNotEmpty) {
-            _addRecipeReagent(reagentsRecipe);
+          if (_reagentsRecipe.isNotEmpty) {
+            _addRecipeReagent(_reagentsRecipe);
           } else {
             MyWidgets.buildErorDialog(context);
           }
@@ -388,11 +390,11 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   Future<void> _addRecipeReagent(List<ReagentsRecipe> reagentsRecipe) async {
     await _checkEnoughReagents(reagentsRecipe);
 
-    if (!isConfirmation) {
+    if (!_isConfirmation) {
       return;
     }
 
-    RecipeModel recipe = RecipeModel(isAccepted: false, isEnough: isEnoughAll);
+    RecipeModel recipe = RecipeModel(isAccepted: false, isEnough: _isEnoughAll);
     int recipeId = await RecipeRepository().insertRecipe(recipe);
 
     for (var element in reagentsRecipe) {
@@ -411,11 +413,13 @@ class _CollectRecipStateState extends State<CollectRecipe> {
   }
 
   Future<void> _checkEnoughReagents(List<ReagentsRecipe> reagentsRecipe) async {
-    isEnoughAll = true;
+    _isEnoughAll = true;
     for (int i = 0; i < reagentsRecipe.length; i++) {
-      WarehouseModel? warehouseModel = await WarehouseRepository().getElementByReagentId(reagentsRecipe[i].reagentId);
-      if (warehouseModel == null || warehouseModel.quantity < reagentsRecipe[i].quantity) {
-        isEnoughAll = false;
+      WarehouseModel? warehouseModel = await WarehouseRepository()
+          .getElementByReagentId(reagentsRecipe[i].reagentId);
+      if (warehouseModel == null ||
+          warehouseModel.quantity < reagentsRecipe[i].quantity) {
+        _isEnoughAll = false;
         await _showConfirmationDialog();
         return;
       }
@@ -434,7 +438,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 ElevatedButton(
                   onPressed: () {
-                    isConfirmation = true;
+                    _isConfirmation = true;
                     Navigator.of(context).pop();
                   },
                   child: const Text(
@@ -444,7 +448,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    isConfirmation = false;
+                    _isConfirmation = false;
                     Navigator.of(context).pop();
                   },
                   child: const Text(
@@ -492,7 +496,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     showDialog(
       context: context,
       builder: (context) {
-        selectedReagent = null;
+        _selectedReagent = null;
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -527,7 +531,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
           } else {
             List<Reagent> reagents = snapshot.data!;
             return DropdownButtonFormField<int>(
-              value: selectedReagent?.id,
+              value: _selectedReagent?.id,
               items: reagents.map((reagent) {
                 return DropdownMenuItem<int>(
                   value: reagent.id,
@@ -536,7 +540,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
+                  _selectedReagent = reagents.firstWhere((reagent) => reagent.id == value);
                 });
               },
               decoration: MyWidgets.buildInputDecoration('Выберите реагент'),
@@ -552,7 +556,7 @@ class _CollectRecipStateState extends State<CollectRecipe> {
       keyboardType: TextInputType.number,
       onChanged: (value) {
         setState(() {
-          quantity = int.tryParse(value);
+          _quantity = int.tryParse(value);
         });
       },
     );
@@ -562,8 +566,8 @@ class _CollectRecipStateState extends State<CollectRecipe> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          if (selectedReagent != null && quantity != null) {
-            _checkingAddingReagent(selectedReagent!.id!, quantity!);
+          if (_selectedReagent != null && _quantity != null) {
+            _checkingAddingReagent(_selectedReagent!.id!, _quantity!);
             Navigator.of(context).pop();
           } else {
             MyWidgets.buildErorDialog(context);
