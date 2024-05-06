@@ -116,6 +116,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
                     return ExpansionTile(
+                      iconColor: Colors.blue[300],
                       title: Text(
                         '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),
@@ -253,6 +254,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
                   itemBuilder: (context, index) {
                     RecipeModel recipe = recipes[index];
                     return ExpansionTile(
+                      iconColor: Colors.blue[300],
                       title: Text(
                         '№${recipe.id}',
                         style: const TextStyle(fontSize: 22),

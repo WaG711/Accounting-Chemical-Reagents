@@ -63,6 +63,7 @@ class _WarehouseRecipesState extends State<WarehouseRecipes> {
                     itemBuilder: (context, index) {
                       RecipeModel recipe = recipes[index];
                       return ExpansionTile(
+                        iconColor: Colors.green[300],
                         title: Text(
                           '№${recipe.id}',
                           style: const TextStyle(fontSize: 22),

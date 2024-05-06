@@ -93,6 +93,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
                   itemBuilder: (context, index) {
                     ReadyRecipeModel readyRecipe = readyRecipes[index];
                     return ExpansionTile(
+                      iconColor: Colors.blue[300],
                       title: Text(
                         readyRecipe.name,
                         style: const TextStyle(fontSize: 22),
