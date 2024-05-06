@@ -74,7 +74,8 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
           future: _fetchReadyRecipesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.blue[300]));
             } else if (snapshot.hasError) {
               return Text('Ошибка: ${snapshot.error}');
             } else {
@@ -127,7 +128,7 @@ class _ReadyRecipeState extends State<ReadyRecipe> {
       future: _getReagentsInfo(readyRecipeId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator(color: Colors.blue[300]);
         } else if (snapshot.hasError) {
           return Text('Ошибка: ${snapshot.error}');
         } else {

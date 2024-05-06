@@ -97,7 +97,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
           future: _fetchEnoughRecipesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.blue[300]));
             } else if (snapshot.hasError) {
               return Text('Ошибка: ${snapshot.error}');
             } else {
@@ -150,7 +151,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
       future: _getReagentsInfo(recipeId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator(color: Colors.blue[300]);
         } else if (snapshot.hasError) {
           return Text('Ошибка: ${snapshot.error}');
         } else {
@@ -233,7 +234,8 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
           future: _fetchNoEnoughRecipesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.blue[300]));
             } else if (snapshot.hasError) {
               return Text('Ошибка: ${snapshot.error}');
             } else {
@@ -293,7 +295,7 @@ class _PendingRecipesStateState extends State<PendingRecipes> {
       future: _getNoEnoughRecipeReagentsInfo(recipeId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator(color: Colors.blue[300]);
         } else if (snapshot.hasError) {
           return Text('Ошибка: ${snapshot.error}');
         } else {
